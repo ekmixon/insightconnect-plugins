@@ -22,7 +22,7 @@ class ListAllOrganizationPolicies(komand.Action):
         offset = params.get("offset")
         limit = params.get("limit")
 
-        params = dict()
+        params = {}
         if input_state is not None:
             params["state"] = input_state.upper()  # CloudLock input is case-sensitive
         params["offset"] = offset

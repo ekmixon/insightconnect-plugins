@@ -19,15 +19,14 @@ class GetNewAlerts(insightconnect_plugin_runtime.Trigger):
         interval = params.get("interval", 10)
         now = datetime.datetime.now()
 
+        query = "from siem.logtrust.alert.info select *"
+
         while True:
             time_ago = now - datetime.timedelta(seconds=interval)
             now = datetime.datetime.now()
 
-            query = "from siem.logtrust.alert.info select *"
-
             new_alerts_query_output = self.connection.api.query(query, time_ago.isoformat(), now.isoformat())
-            new_alerts = new_alerts_query_output.get("object", {})
-            if new_alerts:
+            if new_alerts := new_alerts_query_output.get("object", {}):
                 self.logger.info("Alerts received, sending...")
                 for alert in new_alerts:
                     cleaned_result = insightconnect_plugin_runtime.helper.clean(alert)

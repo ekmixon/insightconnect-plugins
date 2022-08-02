@@ -34,15 +34,14 @@ class Connection(komand.Connection):
     def test(self):
         # TODO: Get log contents to pass to ConnectionTestException
         with fmcapi.FMC(
-            host=self.host,
-            username=self.username,
-            password=self.password,
-            autodeploy=True,
-            limit=10,
-        ) as fmc1:
+                host=self.host,
+                username=self.username,
+                password=self.password,
+                autodeploy=True,
+                limit=10,
+            ) as fmc1:
             acp = fmcapi.AccessPolicies(fmc=fmc1)
-            policy = acp.get()
-            if policy:
+            if policy := acp.get():
                 return
             else:
                 raise ConnectionTestException(

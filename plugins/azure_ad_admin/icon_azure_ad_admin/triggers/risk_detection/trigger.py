@@ -45,7 +45,7 @@ class RiskDetection(komand.Trigger):
 
         new_risks = requests.get(risk_detect_endpoint, headers=headers)
 
-        if not new_risks.status_code == 200:
+        if new_risks.status_code != 200:
             raise PluginException(
                 cause=f"Risk Detections returned an unexpected response: {new_risks.status_code}",
                 assistance="Please contact support for help.",

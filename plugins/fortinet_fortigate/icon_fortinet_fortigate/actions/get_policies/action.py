@@ -19,11 +19,10 @@ class GetPolicies(komand.Action):
         endpoint = f"https://{self.connection.host}/api/v2/cmdb/firewall/policy"
         helper = Helpers(self.logger)
 
-        filter_ = params.get(Input.NAME_FILTER, "")
-        get_params = {}
-        if filter_:
+        if filter_ := params.get(Input.NAME_FILTER, ""):
             get_params = {"filter": f"name=@{filter_}"}
-
+        else:
+            get_params = {}
         response = self.connection.session.get(endpoint, params=get_params, verify=self.connection.ssl_verify)
 
         try:

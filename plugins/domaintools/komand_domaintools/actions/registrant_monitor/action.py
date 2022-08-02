@@ -16,9 +16,8 @@ class RegistrantMonitor(komand.Action):
 
     def run(self, params={}):
         params = komand.helper.clean_dict(params)
-        response = utils.make_request(self.connection.api.registrant_monitor, **params)
         # return { 'response': response.data() }
-        return response
+        return utils.make_request(self.connection.api.registrant_monitor, **params)
 
     def test(self):
         """TODO: Test action"""

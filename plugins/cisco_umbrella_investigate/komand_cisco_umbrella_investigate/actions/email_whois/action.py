@@ -26,23 +26,22 @@ class EmailWhois(komand.Action):
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 
-        one_email_whois = email_whois.get(email)
-        if not one_email_whois:
+        if one_email_whois := email_whois.get(email):
+            return {
+                "email_whois": [
+                    {
+                        "more_data_available": one_email_whois.get("moreDataAvailable"),
+                        "limit": one_email_whois.get("limit"),
+                        "domains": one_email_whois.get("domains"),
+                        "total_results": one_email_whois.get("totalResults"),
+                    }
+                ]
+            }
+        else:
             raise PluginException(
                 cause="Unable to return WHOIS data.",
                 assistance="Please try submitting another query.",
             )
-
-        return {
-            "email_whois": [
-                {
-                    "more_data_available": one_email_whois.get("moreDataAvailable"),
-                    "limit": one_email_whois.get("limit"),
-                    "domains": one_email_whois.get("domains"),
-                    "total_results": one_email_whois.get("totalResults"),
-                }
-            ]
-        }
 
     def test(self):
         return {"email_whois": []}

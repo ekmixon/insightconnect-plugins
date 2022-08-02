@@ -18,12 +18,11 @@ class ViewMachine(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         machine_name = params.get("machine_name", "")
-        endpoint = server + "/machines/view/" + machine_name
+        endpoint = f"{server}/machines/view/{machine_name}"
 
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
             """
             result = {"machine": {}}
             keys = response['machine'].keys()
@@ -31,10 +30,10 @@ class ViewMachine(komand.Action):
                 if response['machine'][key] is not None:
                     result['machine'][key] = response['machine'][key]
             """
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

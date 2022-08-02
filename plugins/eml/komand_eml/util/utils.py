@@ -53,8 +53,9 @@ def attachments(mail, log):
 
         filename = part.get_filename()
         if filename is None:
-            content_line = filename_pattern.findall(part.get("Content-Type"))
-            if content_line:
+            if content_line := filename_pattern.findall(
+                part.get("Content-Type")
+            ):
                 filename = content_line[0].lstrip("name=").strip('"')
                 log.debug("Content-Type filename: %s", filename)
         if not filename:

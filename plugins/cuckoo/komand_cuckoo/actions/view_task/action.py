@@ -18,12 +18,11 @@ class ViewTask(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         task_id = params.get("task_id", "")
-        endpoint = server + "/tasks/view/" + str(task_id)
+        endpoint = f"{server}/tasks/view/{str(task_id)}"
 
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
             """
             result = {'task': {}}
             keys = response['task'].keys()
@@ -40,10 +39,10 @@ class ViewTask(komand.Action):
                     })
             result['task']['options'] = option_list
             """
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

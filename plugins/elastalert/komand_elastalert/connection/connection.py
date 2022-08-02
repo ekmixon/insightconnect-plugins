@@ -18,4 +18,4 @@ class Connection(komand.Connection):
         if passwd is None:
             passwd = ""  # noqa: B105
 
-        self.auth_key = "{}:{}".format(user, passwd)
+        self.auth_key = f"{user}:{passwd}"

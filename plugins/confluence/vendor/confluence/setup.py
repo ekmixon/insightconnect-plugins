@@ -14,16 +14,8 @@ module_name = package_name.replace('-', '_')
 base_path = os.path.dirname(__file__)
 
 test_suite = "py.test"
-if sys.hexversion >= 0x02060000:
-    # requirements.extend(['nose-machineout'])
-    test_suite = "py.test"
-
 # handle python 3
-if sys.version_info >= (3,):
-    use_2to3 = True
-else:
-    use_2to3 = False
-
+use_2to3 = sys.version_info >= (3,)
 options = {}
 
 # class PyTest(Command):

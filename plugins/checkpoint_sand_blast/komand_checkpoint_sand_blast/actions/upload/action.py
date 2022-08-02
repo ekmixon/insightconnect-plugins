@@ -60,17 +60,11 @@ class Upload(komand.Action):
         if response.status_code == 200:
             response_json = response.json()
             code = response_json["response"]["status"]["code"]
-            if code == 1001 or 1002:
-                return {"results": response_json["response"]}
-            else:
-                label = response_json["response"]["status"]["label"]
-                message = response_json["response"]["status"]["message"]
-                self.logger.error("There was a issue with the return from Checkpoint: {}".format(message))
-                raise Exception("Checkpoint error {code} {label}".format(code=code, label=label))
+            return {"results": response_json["response"]}
         else:
             status_code_message = self._HTTPERROR.get(response.status_code, self._HTTPERROR[000])
             self.logger.error("{status} ({code})".format(status=status_code_message, code=response.status_code))
-            raise Exception("HTTP Error code{}".format(response.status_code))
+            raise Exception(f"HTTP Error code{response.status_code}")
 
     def test(self):
         # TODO: Implement test function

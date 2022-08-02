@@ -16,8 +16,7 @@ class GetDomainVisits(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        address = params.get(Input.ADDRESS)
-        if address:
+        if address := params.get(Input.ADDRESS):
             return {
                 Output.DOMAIN_VISITS: self.connection.client.destinations_most_recent_request(
                     parse.urlparse(address).hostname

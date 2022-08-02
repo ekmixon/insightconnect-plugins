@@ -17,8 +17,9 @@ class Reputation(komand.Action):
     def run(self, params={}):
         query = params.get("domain")
         include_reasons = params.get("include_reasons")
-        response = utils.make_request(self.connection.api.reputation, query, include_reasons)
-        return response
+        return utils.make_request(
+            self.connection.api.reputation, query, include_reasons
+        )
 
     def test(self):
         """TODO: Test action"""

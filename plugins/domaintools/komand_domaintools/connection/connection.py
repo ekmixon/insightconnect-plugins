@@ -23,6 +23,6 @@ class Connection(komand.Connection):
             raise Exception("DomainTools: Connect: Authorization failed. Please try again")
         except Exception as e:
             self.logger.error("DomainTools: Connect: error %s", str(e))
-            raise Exception("DomainTools: Connect: Failed to connect to server {}".format(e))
+            raise Exception(f"DomainTools: Connect: Failed to connect to server {e}")
 
         self.api = api

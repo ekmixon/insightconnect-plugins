@@ -20,7 +20,7 @@ class Monitor(komand.Trigger):
             output=MonitorOutput(),
         )
 
-    def run(self, params={}):  # noqa: MC0001
+    def run(self, params={}):    # noqa: MC0001
         """Run the trigger"""
         # send a test event
         # Stored data for file
@@ -58,13 +58,13 @@ class Monitor(komand.Trigger):
                     tmp_array = array("I")
                     if monitor_size:
                         tmp_array.append(lstatval.st_size)
-                        self.logger.info(path + "/" + name + " size is " + str(lstatval.st_size))
+                        self.logger.info(f"{path}/{name} size is {str(lstatval.st_size)}")
                     if monitor_time:
                         tmp_array.append(int(lstatval.st_mtime))
-                        self.logger.info(path + "/" + name + " time is " + time.ctime(int(lstatval.st_mtime)))
+                        self.logger.info(f"{path}/{name} time is {time.ctime(int(lstatval.st_mtime))}")
                     if monitor_mode:
                         tmp_array.append(lstatval.st_mode)
-                        self.logger.info(path + "/" + name + " mode is " + str(lstatval.st_mode))
+                        self.logger.info(f"{path}/{name} mode is {str(lstatval.st_mode)}")
                     # Populate dictionary with current values
                     dir_attribs[name] = tmp_array
 
@@ -74,22 +74,21 @@ class Monitor(komand.Trigger):
                         has_changed = True
                     # Store information about directory
                     stored_dir_attribs = dir_attribs
-                    names2 = "\n".join(self.connection.ftp_host._dir(path))
                     if has_changed:
+                        names2 = "\n".join(self.connection.ftp_host._dir(path))
                         self.send({"changed": names2})
-            # If it's just a file
             else:
                 # Populate file_attribs with values to be tracked
                 file_attribs = array("I")
                 if monitor_size:
                     file_attribs.append(dir_test.st_size)
-                    self.logger.info(path + " size is " + str(dir_test.st_size))
+                    self.logger.info(f"{path} size is {str(dir_test.st_size)}")
                 if monitor_time:
                     file_attribs.append(int(dir_test.st_mtime))
-                    self.logger.info(path + " time is " + time.ctime(int(dir_test.st_mtime)))
+                    self.logger.info(f"{path} time is {time.ctime(int(dir_test.st_mtime))}")
                 if monitor_mode:
                     file_attribs.append(dir_test.st_mode)
-                    self.logger.info(path + " mode is " + str(dir_test.st_mode))
+                    self.logger.info(f"{path} mode is {str(dir_test.st_mode)}")
                 if file_attribs != stored_file_attribs:
                     if len(stored_file_attribs) > 0:
                         has_changed = True

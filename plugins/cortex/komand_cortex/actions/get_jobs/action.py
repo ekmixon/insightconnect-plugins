@@ -16,26 +16,24 @@ class GetJobs(komand.Action):
 
     def run(self, params={}):
         """TODO: Run action"""
-        url = "{}/{}".format(self.connection.url, "api/job")
+        url = f"{self.connection.url}/api/job"
 
         l = []
 
         for i in params.keys():
-            if isinstance(params[i], int):
-                if params[i] > 0:
-                    l.append(i)
-                    continue
-            if isinstance(params[i], str):
-                if params[i].isalpha():
-                    l.append(i)
+            if isinstance(params[i], int) and params[i] > 0:
+                l.append(i)
+                continue
+            if isinstance(params[i], str) and params[i].isalpha():
+                l.append(i)
 
         self.logger.info("Inputs: %s", l)
 
         if l:
-            url = "{}{}".format(url, "?")
+            url = f"{url}?"
             for opt in l:
                 # self.logger.info(url)
-                url = "{}{}={}&".format(url, opt, params.get(opt))
+                url = f"{url}{opt}={params.get(opt)}&"
             url = url.rstrip("&")
         self.logger.info(url)
 
@@ -52,16 +50,14 @@ class GetJobs(komand.Action):
         except:
             raise
 
-        if not out:
-            return {"list": [{}]}
-        return {"list": out}
+        return {"list": out} if out else {"list": [{}]}
 
     def test(self):
         """TODO: Test action"""
         client = self.connection.client
 
         try:
-            url = "{}/{}".format(self.connection.url, "api/job")
+            url = f"{self.connection.url}/api/job"
             out = requests.get(url).json()
         except:
             raise

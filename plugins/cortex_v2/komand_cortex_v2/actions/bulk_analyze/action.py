@@ -17,7 +17,6 @@ class BulkAnalyze(komand.Action):
     def run(self, params={}):
         api = self.connection.api
         job_results = []
-        cortex_analyzers = set()
         # set vars
         analyzer_ids, observable, analyze_all, attributes = (
             params.get(Input.ANALYZER_IDS),
@@ -29,13 +28,10 @@ class BulkAnalyze(komand.Action):
         tlp_num = attributes.get("tlp", None)
         # get list of analyzers
         all_analyzers = api.analyzers.find_all(query="")
-        # get list of cortex analyzers
-        for analyzer in all_analyzers:
-            cortex_analyzers.add(analyzer.json()["name"])
+        cortex_analyzers = {analyzer.json()["name"] for analyzer in all_analyzers}
         # check analyzers in list and available
         if analyze_all == False:
-            missing_ids = set(analyzer_ids).difference(cortex_analyzers)
-            if len(missing_ids) > 0:
+            if missing_ids := set(analyzer_ids).difference(cortex_analyzers):
                 self.logger.error(f"Error Analyzers: {missing_ids} not found in Cortex")
                 # remove missing analyzers
                 for analyzer in missing_ids:

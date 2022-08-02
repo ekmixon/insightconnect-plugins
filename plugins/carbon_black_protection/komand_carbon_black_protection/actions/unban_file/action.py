@@ -20,7 +20,10 @@ class UnbanFile(komand.Action):
         policy_ids = params.get("policy_ids")
         new_state = params.get("new_state").lower()
 
-        self.logger.info("Unbanning via %s method with new state of %s" % (ban_method, new_state))
+        self.logger.info(
+            f"Unbanning via {ban_method} method with new state of {new_state}"
+        )
+
 
         data = {
             "hash": file_hash,
@@ -28,28 +31,26 @@ class UnbanFile(komand.Action):
             "policyIds": "0" if ban_method is "globally" else ",".join(str(i) for i in policy_ids),
         }
 
-        url = self.connection.host + "/api/bit9platform/v1/fileRule"
+        url = f"{self.connection.host}/api/bit9platform/v1/fileRule"
         r = self.connection.session.post(url, json.dumps(data), verify=self.connection.verify)
 
         try:
             r.raise_for_status()
         except:
-            raise Exception("Run: HTTPError: %s" % r.text)
+            raise Exception(f"Run: HTTPError: {r.text}")
 
         result = komand.helper.clean(r.json())
 
         return {"file_rule": result}
 
     def test(self):
-        url = (
-            self.connection.host + "/api/bit9platform/v1/approvalRequest?limit=-1"
-        )  # -1 returns just the count (lightweight call)
+        url = f"{self.connection.host}/api/bit9platform/v1/approvalRequest?limit=-1"
 
         request = self.connection.session.get(url=url, verify=self.connection.verify)
 
         try:
             request.raise_for_status()
         except:
-            raise Exception("Run: HTTPError: %s" % request.text)
+            raise Exception(f"Run: HTTPError: {request.text}")
 
         return {}

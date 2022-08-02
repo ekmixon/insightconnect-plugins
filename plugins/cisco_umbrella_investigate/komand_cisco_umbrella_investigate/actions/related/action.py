@@ -20,8 +20,7 @@ class Related(komand.Action):
             related = self.connection.investigate.related(domain)
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
-        founded = related.get("found")
-        if founded:
+        if founded := related.get("found"):
             return {"related": related.get("tb1")}
 
         self.logger.info("No results found")

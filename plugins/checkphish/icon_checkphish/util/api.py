@@ -71,8 +71,7 @@ class CheckPhishAPI:
                 raise PluginException(preset=PluginException.Preset.SERVER_ERROR, data=response.text)
 
             if 200 <= response.status_code < 300:
-                error_message = response.json().get("errorMessage")
-                if error_message:
+                if error_message := response.json().get("errorMessage"):
                     raise PluginException(
                         cause="CheckPhish API Returned as error message.",
                         assistance=f"The error message is: {error_message}",

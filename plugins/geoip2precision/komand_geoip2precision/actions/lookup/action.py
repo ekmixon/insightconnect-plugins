@@ -45,7 +45,7 @@ class Lookup(komand.Action):
         longitude = str(response.location.longitude)
         latitude = str(response.location.latitude)
 
-        dic = {
+        return {
             "address": address,
             "asn": asn,
             "org": org,
@@ -59,8 +59,6 @@ class Lookup(komand.Action):
             "longitude": longitude,
             "latitude": latitude,
         }
-
-        return dic
 
     def test(self):
         user = self.connection.user

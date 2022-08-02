@@ -49,8 +49,7 @@ class DevoAPI:
             "ipAsString": True,
         }
 
-        results = self._post_to_api(endpoint, post_payload)
-        return results
+        return self._post_to_api(endpoint, post_payload)
 
     def test_connection(self):
         """
@@ -117,8 +116,7 @@ class DevoAPI:
 
             if response.status_code >= 200 and response.status_code < 300:
                 self.logger.info("Returning from post to API")
-                output = self._get_stream(response)
-                return output
+                return self._get_stream(response)
 
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
         except json.decoder.JSONDecodeError as e:
@@ -139,10 +137,9 @@ class DevoAPI:
                     assistance="The response received from the server was too large, please edit your input to reduce the returned data size and try again. See the trouble shooting section in the help for this plugin.",
                 )
 
-        if content:
-            try:
-                return json.loads(content)
-            except Exception as e:
-                raise PluginException(PluginException.Preset.INVALID_JSON)
-        else:
+        if not content:
             return {}
+        try:
+            return json.loads(content)
+        except Exception as e:
+            raise PluginException(PluginException.Preset.INVALID_JSON)

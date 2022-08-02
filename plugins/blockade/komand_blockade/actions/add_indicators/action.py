@@ -13,7 +13,7 @@ class AddIndicators(komand.Action):
         )
 
     def run(self, params={}):
-        url = self.connection.url + "/admin/add-indicators"
+        url = f"{self.connection.url}/admin/add-indicators"
         data = self.connection.data
         data["indicators"] = params.get("indicators")
         try:
@@ -27,7 +27,7 @@ class AddIndicators(komand.Action):
             raise
 
     def test(self):
-        url = self.connection.url + "/get-indicators"
+        url = f"{self.connection.url}/get-indicators"
         try:
             resp = requests.get(headers=self.connection.headers, url=url)
             if resp.status_code == 200:

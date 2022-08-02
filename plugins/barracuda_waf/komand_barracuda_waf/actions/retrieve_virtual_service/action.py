@@ -16,7 +16,7 @@ class RetrieveVirtualService(komand.Action):
 
         service_id = params.get("id")
         if service_id:
-            action = action + "/" + service_id
+            action = f"{action}/{service_id}"
 
         r = self.connection.connector.get(action)
         self.connection.connector.raise_error_when_not_in_status(200)

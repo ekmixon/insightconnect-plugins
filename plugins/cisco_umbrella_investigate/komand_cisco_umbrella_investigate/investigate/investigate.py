@@ -60,7 +60,7 @@ class Investigate(object):
             "passive_dns_ip": "pdns/ip/{}",
             "passive_dns_raw": "pdns/raw/{}",
         }
-        self._auth_header = {"Authorization": "Bearer " + self.api_key}
+        self._auth_header = {"Authorization": f"Bearer {self.api_key}"}
 
     def get(self, uri, params={}):
         """A generic method to make GET requests to the OpenDNS Investigate API
@@ -236,19 +236,17 @@ class Investigate(object):
     def domain_whois(self, domain):
         """Gets whois information for a domain"""
         uri = self._uris["whois_domain"].format(domain)
-        resp_json = self.get_parse(uri)
-        return resp_json
+        return self.get_parse(uri)
 
     def domain_whois_history(self, domain, limit=None):
         """Gets whois history for a domain"""
 
-        params = dict()
+        params = {}
         if limit is not None:
             params["limit"] = limit
 
         uri = self._uris["whois_domain_history"].format(domain)
-        resp_json = self.get_parse(uri, params)
-        return resp_json
+        return self.get_parse(uri, params)
 
     def ns_whois(self, nameservers, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET, sort_field=DEFAULT_SORT):
         """Gets the domains that have been registered with a nameserver or
@@ -265,8 +263,7 @@ class Investigate(object):
                 "sortField": sort_field,
             }
 
-        resp_json = self.get_parse(uri, params=params)
-        return resp_json
+        return self.get_parse(uri, params=params)
 
     def email_whois(self, emails, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET, sort_field=DEFAULT_SORT):
         """Gets the domains that have been registered with a given email
@@ -284,13 +281,12 @@ class Investigate(object):
                 "sortField": sort_field,
             }
 
-        resp_json = self.get_parse(uri, params=params)
-        return resp_json
+        return self.get_parse(uri, params=params)
 
     def search(self, pattern, start=None, limit=None, include_category=None):
         """Searches for domains that match a given pattern"""
 
-        params = dict()
+        params = {}
 
         if start is None:
             start = datetime.timedelta(days=30)
@@ -363,17 +359,13 @@ class Investigate(object):
             )
 
         uri = self._uris["as_for_ip"].format(ip)
-        resp_json = self.get_parse(uri)
-
-        return resp_json
+        return self.get_parse(uri)
 
     def prefixes_for_asn(self, asn):
         """Gets the AS information for a given ASN. Return the CIDR and geolocation associated with the AS."""
 
         uri = self._uris["prefixes_for_asn"].format(asn)
-        resp_json = self.get_parse(uri)
-
-        return resp_json
+        return self.get_parse(uri)
 
     def get_timeline(self, name):
         uri = urljoin(self._uris["timeline"], name)

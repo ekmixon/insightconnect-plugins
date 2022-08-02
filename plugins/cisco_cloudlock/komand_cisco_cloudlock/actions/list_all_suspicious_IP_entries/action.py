@@ -22,7 +22,7 @@ class ListAllSuspiciousIPEntries(komand.Action):
         offset = params.get("offset")
         limit = params.get("limit")
 
-        params = dict()
+        params = {}
         if name is not None:
             params["name"] = name
         if q is not None:

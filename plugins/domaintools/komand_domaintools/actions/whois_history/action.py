@@ -16,8 +16,7 @@ class WhoisHistory(komand.Action):
 
     def run(self, params={}):
         query = params.get("domain")
-        response = utils.make_request(self.connection.api.whois_history, query)
-        return response
+        return utils.make_request(self.connection.api.whois_history, query)
 
     def test(self):
         """TODO: Test action"""

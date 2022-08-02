@@ -17,11 +17,11 @@ class RetrieveDataTheft(komand.Action):
         if not policy_id:
             self.connection.connector.raise_error("Empty argument policy_id")
 
-        action = action + "/" + policy_id + "/data_theft_protection"
+        action = f"{action}/{policy_id}/data_theft_protection"
 
         data_id = params.get("id")
         if data_id:
-            action = action + "/" + data_id
+            action = f"{action}/{data_id}"
 
         r = self.connection.connector.get(action)
         self.connection.connector.raise_error_when_not_in_status(200)

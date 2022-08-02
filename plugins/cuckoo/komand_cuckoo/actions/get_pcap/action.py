@@ -19,7 +19,7 @@ class GetPcap(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         task_id = params.get("task_id", "")
-        endpoint = server + "/pcap/get/" + str(task_id)
+        endpoint = f"{server}/pcap/get/{str(task_id)}"
 
         try:
             r = requests.get(endpoint)
@@ -35,7 +35,7 @@ class GetPcap(komand.Action):
                 return {"contents": base64.b64encode(content).decode("UTF-8")}
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

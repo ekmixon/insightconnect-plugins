@@ -152,8 +152,7 @@ class APIClient(object):
 
         if response.status_code == 200:
             try:
-                match = response.json()["content"][0]
-                return match
+                return response.json()["content"][0]
             except json.JSONDecodeError:
                 raise APIException(
                     status_code=None,
@@ -284,8 +283,7 @@ class APIClient(object):
 
         if response.status_code == 200:
             try:
-                command_id = response.json()["commandID_computer"]
-                return command_id
+                return response.json()["commandID_computer"]
             except json.JSONDecodeError:
                 raise APIException(
                     status_code=None,
@@ -313,8 +311,7 @@ class APIClient(object):
 
         if response.status_code == 200:
             try:
-                domains = response.json()
-                return domains
+                return response.json()
             except json.JSONDecodeError:
                 raise APIException(
                     status_code=None,

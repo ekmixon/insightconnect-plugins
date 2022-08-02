@@ -58,8 +58,7 @@ class AuthV1(client.Client):
         }
         if ipaddr is not None:
             params["ipaddr"] = ipaddr
-        response = self.json_api_call("POST", "/rest/v1/preauth", params)
-        return response
+        return self.json_api_call("POST", "/rest/v1/preauth", params)
 
     def auth(
         self,
@@ -92,19 +91,12 @@ class AuthV1(client.Client):
             params["auto"] = auto
         elif factor == FACTOR_PASSCODE:
             params["code"] = passcode
-        elif factor == FACTOR_PHONE:
+        elif factor in [FACTOR_PHONE, FACTOR_SMS, FACTOR_PUSH]:
             params["phone"] = phone
-        elif factor == FACTOR_SMS:
-            params["phone"] = phone
-        elif factor == FACTOR_PUSH:
-            params["phone"] = phone
-
         response = self.json_api_call("POST", "/rest/v1/auth", params)
         if self.auth_details:
             return response
-        if async_txn:
-            return response["txid"]
-        return response["result"] == "allow"
+        return response["txid"] if async_txn else response["result"] == "allow"
 
     def status(self, txid):
         """

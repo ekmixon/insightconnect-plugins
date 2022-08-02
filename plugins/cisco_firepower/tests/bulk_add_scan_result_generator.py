@@ -9,31 +9,21 @@ parser.add_argument("--results", "-r", default="10", help="The number of results
 
 
 def gen_source():
-    x = {}
-    x["scanner_id"] = "ProductXReport"
-    x["source_id"] = "ProductX"
-    y = {}
-    y["scanner_id"] = "ProductYScanReport"
-    y["source_id"] = "ProductY"
-    z = {}
-    z["scanner_id"] = "ProductZImport"
-    z["source_id"] = "ProductZ"
+    x = {"scanner_id": "ProductXReport", "source_id": "ProductX"}
+    y = {"scanner_id": "ProductYScanReport", "source_id": "ProductY"}
+    z = {"scanner_id": "ProductZImport", "source_id": "ProductZ"}
     return [x, y, z]
 
 
 def gen_os():
-    ubuntu = {}
-    ubuntu["version"] = "16.04"
-    ubuntu["vendor"] = "Canonical"
-    ubuntu["name"] = "Ubuntu"
-    mac = {}
-    mac["version"] = "High Sierra"
-    mac["vendor"] = "Apple"
-    mac["name"] = "MacOS"
-    windows = {}
-    windows["version"] = "Unknown"
-    windows["vendor"] = "Microsoft"
-    windows["name"] = "Windows Server 2012"
+    ubuntu = {"version": "16.04", "vendor": "Canonical", "name": "Ubuntu"}
+    mac = {"version": "High Sierra", "vendor": "Apple", "name": "MacOS"}
+    windows = {
+        "version": "Unknown",
+        "vendor": "Microsoft",
+        "name": "Windows Server 2012",
+    }
+
     return [ubuntu, mac, windows]
 
 
@@ -66,12 +56,11 @@ def gen_vuln_title(index):
     ]
     first = randint(0, len(words) - 1)
     second = randint(0, len(words) - 1)
-    return "%s %s %s" % (words[first], words[second], index)
+    return f"{words[first]} {words[second]} {index}"
 
 
 def gen_single_scan_result(os, source, sentence, index):
-    scan_result = {}
-    scan_result["host"] = {}
+    scan_result = {"host": {}}
     gen_bugtraq_ids = randint(0, 1)
     vuln_id = randint(1, 999999)
     include_protocol_id = randint(0, 1)
@@ -79,7 +68,7 @@ def gen_single_scan_result(os, source, sentence, index):
     include_description = randint(0, 1)
 
     ip = randint(1, 255)
-    scan_result["host"]["ip_address"] = "0.0.0.%s" % (ip)
+    scan_result["host"]["ip_address"] = f"0.0.0.{ip}"
 
     scan_result["host"]["operating_system"] = os
 
@@ -92,9 +81,7 @@ def gen_single_scan_result(os, source, sentence, index):
         scan_result_details["port"] = str(randint(1, 65535))
 
     if include_description:
-        description = ""
-        for i in range(randint(1, 2)):
-            description += sentence
+        description = "".join(sentence for _ in range(randint(1, 2)))
         scan_result_details["description"] = description
 
     scan_result_details["vulnerability_title"] = gen_vuln_title(index)
@@ -102,9 +89,9 @@ def gen_single_scan_result(os, source, sentence, index):
     if gen_bugtraq_ids:
         bugtraqs = []
         cves = []
-        for i in range(randint(1, 10)):
+        for _ in range(randint(1, 10)):
             bugtraqs.append(str(randint(1, 999999)))
-            cve = "CVE-2049-%s" % randint(1000, 9999)
+            cve = f"CVE-2049-{randint(1000, 9999)}"
             cves.append(cve)
         scan_result_details["bugtraq_ids"] = bugtraqs
         scan_result_details["cve_ids"] = cves
@@ -126,14 +113,12 @@ for i in range(int(args.results)):
     result = gen_single_scan_result(OS[os_index], SOURCE[source_index], SENTENCE, i)
     scan_results.append(result)
 
-test_json = {}
-test_json["body"] = {}
-test_json["body"]["input"] = {}
-test_json["body"]["input"]["scan_results"] = scan_results
-test_json["body"]["input"]["operation"] = "ScanFlush"
+test_json = {"body": {}}
+test_json["body"]["input"] = {
+    "scan_results": scan_results,
+    "operation": "ScanFlush",
+}
 
-f = open("scan_results.json", "w")
-f.write(json.dumps(test_json, indent=2, sort_keys=True))
-f.close()
-
+with open("scan_results.json", "w") as f:
+    f.write(json.dumps(test_json, indent=2, sort_keys=True))
 print("Test JSON generated.")

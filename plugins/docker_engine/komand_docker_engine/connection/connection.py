@@ -24,11 +24,11 @@ class Connection(komand.Connection):
         base_url = params.get("url")
 
         try:
-            self.logger.info("Connect: Connecting to {}".format(base_url))
+            self.logger.info(f"Connect: Connecting to {base_url}")
             self.docker_client = docker.DockerClient(
                 base_url=base_url, tls=tls_config, version=params.get("api_version")
             )
         except docker.errors.DockerException:
             raise
         else:
-            self.logger.info("Connect: Connected to {} successfully.".format(base_url))
+            self.logger.info(f"Connect: Connected to {base_url} successfully.")

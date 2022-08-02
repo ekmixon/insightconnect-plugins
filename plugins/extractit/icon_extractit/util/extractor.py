@@ -37,27 +37,24 @@ def strip_subdomains(matches: list) -> list:
 
 
 def clear_domains(matches: list) -> list:
-    new_matches = []
-    for match in enumerate(matches):
-        if not match[1].endswith("@"):
-            new_matches.append(match[1].split("/")[0])
-    return new_matches
+    return [
+        match[1].split("/")[0]
+        for match in enumerate(matches)
+        if not match[1].endswith("@")
+    ]
 
 
 def clear_urls(matches: list) -> list:
-    new_matches = []
-    for match in enumerate(matches):
-        if not validators.ip_address.ipv4(match[1]) and not validators.email(match[1]):
-            new_matches.append(match[1])
-    return new_matches
+    return [
+        match[1]
+        for match in enumerate(matches)
+        if not validators.ip_address.ipv4(match[1])
+        and not validators.email(match[1])
+    ]
 
 
 def clear_emails(matches: list) -> list:
-    new_matches = []
-    for match in enumerate(matches):
-        if validators.email(match[1]):
-            new_matches.append(match[1])
-    return new_matches
+    return [match[1] for match in enumerate(matches) if validators.email(match[1])]
 
 
 def parse_time(dates: list) -> list:

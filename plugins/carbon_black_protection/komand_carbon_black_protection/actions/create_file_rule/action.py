@@ -48,7 +48,7 @@ class CreateFileRule(komand.Action):
             "platformFlags": platform_flags,
         }
 
-        url = self.connection.host + "/api/bit9platform/v1/fileRule"
+        url = f"{self.connection.host}/api/bit9platform/v1/fileRule"
         r = self.connection.session.post(url, json.dumps(data), verify=self.connection.verify)
 
         try:

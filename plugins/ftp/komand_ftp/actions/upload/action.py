@@ -21,7 +21,7 @@ class Upload(komand.Action):
         file_content = params.get("file_content")
         remote_path = params.get("remote_path")
         # Create temporary file with name based on time
-        tmp_file = "tmp" + str(time.time())
+        tmp_file = f"tmp{str(time.time())}"
         with open(tmp_file, "wb") as f:
             decoded = base64.b64decode(file_content)
             f.write(bytes(decoded))

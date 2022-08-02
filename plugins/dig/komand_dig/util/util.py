@@ -12,7 +12,7 @@ def safe_parse(regex):
 
 
 def not_empty(regex):
-    return False if regex == "NO MATCHES FOUND" else True
+    return regex != "NO MATCHES FOUND"
 
 
 def execute_command(logger, cmd, answer_section_regex, flags):

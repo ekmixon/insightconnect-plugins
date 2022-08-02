@@ -36,14 +36,14 @@ class DeleteVm(komand.Action):
                 url,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer %s" % token,
+                    "Authorization": f"Bearer {token}",
                 },
             )
+
 
             status_code = resp.status_code
             return {Output.STATUS_CODE: status_code}
 
-        # Handle exception
         except requests.exceptions.HTTPError as e:
             raise PluginException(cause="HTTP Error", assistance=str(e))
         except Exception:

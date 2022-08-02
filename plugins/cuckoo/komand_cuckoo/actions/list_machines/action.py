@@ -17,7 +17,7 @@ class ListMachines(komand.Action):
 
     def run(self, params={}):
         server = self.connection.server
-        endpoint = server + "/machines/list"
+        endpoint = f"{server}/machines/list"
 
         try:
             r = requests.get(endpoint)
@@ -26,15 +26,15 @@ class ListMachines(komand.Action):
             result = {"machines": []}
             for machine in response["data"]:
                 keys = machine.keys()
-                cleaned_machine = {}
-                for key in keys:
-                    if machine[key] is not None:
-                        cleaned_machine[key] = machine[key]
+                cleaned_machine = {
+                    key: machine[key] for key in keys if machine[key] is not None
+                }
+
                 result["machines"].append(cleaned_machine)
             return result
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         return {"machines": [self.connection.test()]}

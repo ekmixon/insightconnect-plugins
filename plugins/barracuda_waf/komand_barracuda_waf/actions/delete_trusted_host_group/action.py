@@ -15,7 +15,7 @@ class DeleteTrustedHostGroup(komand.Action):
         action = "trusted_host_groups/"
         self.connection.connector.check_required_params(params, ["name"])
 
-        action = action + params.get("name")
+        action += params.get("name")
         r = self.connection.connector.delete(action)
 
         self.connection.connector.raise_error_when_not_in_status(200)

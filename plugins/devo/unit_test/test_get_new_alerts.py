@@ -28,8 +28,8 @@ def timeout_pass(func):
 # This mocks komand.Trigger.send
 # We need this to fake out the plugin into thinking it's sending output in the trigger's run function
 class fakeSender:
-    def send(params):
-        print(params)
+    def send(self):
+        print(self)
 
 
 # Test class

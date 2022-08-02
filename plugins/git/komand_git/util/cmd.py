@@ -13,7 +13,7 @@ class Cmd:
         raises OSError. If password is given, waits for '[Pp]assword.*:' prompt
         and sends it to the command (the password is not logged).
         """
-        self.logger.info("Call: Executing: {}".format(command))
+        self.logger.info(f"Call: Executing: {command}")
 
         try:
             if password:
@@ -34,17 +34,18 @@ class Cmd:
                 stdout = proc["stdout"].decode()
         except pexpect.exceptions.TIMEOUT:
             raise TimeoutError(
-                'Timeout occurred for "{}". Please make sure that the Git '
-                "repository is available and that the provided credentials "
-                "are correct. If the issue persists, please contact Komand "
-                "support".format(command)
+                f'Timeout occurred for "{command}". Please make sure that the Git repository is available and that the provided credentials are correct. If the issue persists, please contact Komand support'
             )
+
         except Exception as e:
-            self.logger.error("Call: Unexpected exception: {}".format(str(e)))
+            self.logger.error(f"Call: Unexpected exception: {str(e)}")
             raise e
 
         if exit_code != 0:
-            raise OSError("Command execution failed: {}\nExit code: {}\n{}".format(command, exit_code, stderr))
+            raise OSError(
+                f"Command execution failed: {command}\nExit code: {exit_code}\n{stderr}"
+            )
+
 
         self.logger.info("Call: Command executed successfully")
         return stdout.rstrip()

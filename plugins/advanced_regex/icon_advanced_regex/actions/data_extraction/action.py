@@ -17,7 +17,7 @@ class DataExtraction(insightconnect_plugin_runtime.Action):
 
     def run(self, params={}):
         flags = shared.constructFlags(params)
-        regex = "(" + params.get(Input.IN_REGEX) + ")"
+        regex = f"({params.get(Input.IN_REGEX)})"
         findall = re.findall(regex, params.get(Input.IN_STRING), flags=flags)
         matches = []
         for match in findall:

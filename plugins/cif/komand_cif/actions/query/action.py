@@ -15,13 +15,12 @@ class Query(komand.Action):
         )
 
     def run(self, params={}):  # noqa: MC0001
-        url = "{}/{}".format(self.connection.url, "observables")
+        url = f"{self.connection.url}/observables"
         headers = {
-            "Authorization": "Token token={}".format(self.connection.api_token),
+            "Authorization": f"Token token={self.connection.api_token}",
             "Accept": "application/vnd.cif.v2+json",
             "Content-Type": "application/json",
         }
-        l = []
 
         # Normalize input parameters
         nolog = str(1) if params.get("nolog") == True else str(0)
@@ -34,17 +33,15 @@ class Query(komand.Action):
             if not params[k]:
                 del params[k]
 
-        for i in params.keys():
-            l.append(i)
-
+        l = list(params.keys())
         self.logger.info("Inputs: %s", l)
 
         if l:
-            url = "{}{}".format(url, "?")
+            url = f"{url}?"
             for opt in l:
                 # Debugging
                 # self.logger.info(url)
-                url = "{}{}={}&".format(url, opt, params.get(opt))
+                url = f"{url}{opt}={params.get(opt)}&"
             url = url.rstrip("&")
         self.logger.info(url)
 
@@ -52,19 +49,19 @@ class Query(komand.Action):
             r = requests.get(url, headers=headers, verify=self.connection.verify)
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            self.logger.error("HTTP error occurred. Error: " + str(e))
+            self.logger.error(f"HTTP error occurred. Error: {str(e)}")
             raise
         except requests.exceptions.ConnectionError as e:
-            self.logger.error("A network problem occurred. Error: " + str(e))
+            self.logger.error(f"A network problem occurred. Error: {str(e)}")
             raise
         except requests.exceptions.Timeout as e:
-            self.logger.error("Timeout occurred. Error: " + str(e))
+            self.logger.error(f"Timeout occurred. Error: {str(e)}")
             raise
         except requests.exceptions.TooManyRedirects as e:
-            self.logger.error("Too many redirects! Error: " + str(e))
+            self.logger.error(f"Too many redirects! Error: {str(e)}")
             raise
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
             raise
 
         # Debugging
@@ -75,8 +72,7 @@ class Query(komand.Action):
             if "confidence" in item:
                 item["confidence"] = float(item["confidence"])
             if isinstance(item["application"], str):
-                format_app = list()
-                format_app.append(item["application"])
+                format_app = [item["application"]]
                 item["application"] = format_app
             mod_data.append(item)
         result = mod_data
@@ -92,29 +88,30 @@ class Query(komand.Action):
         return {"query": result}
 
     def test(self):
-        url = "{}/{}".format(self.connection.url, "ping")
+        url = f"{self.connection.url}/ping"
         headers = {
-            "Authorization": "Token token={}".format(self.connection.api_token),
+            "Authorization": f"Token token={self.connection.api_token}",
             "Accept": "application/vnd.cif.v2+json",
             "Content-Type": "application/json",
         }
+
 
         try:
             r = requests.get(url, headers=headers, verify=self.connection.verify)
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            self.logger.error("HTTP error occurred. Error: " + str(e))
+            self.logger.error(f"HTTP error occurred. Error: {str(e)}")
             raise
         except requests.exceptions.ConnectionError as e:
-            self.logger.error("A network problem occurred. Error: " + str(e))
+            self.logger.error(f"A network problem occurred. Error: {str(e)}")
             raise
         except requests.exceptions.Timeout as e:
-            self.logger.error("Timeout occurred. Error: " + str(e))
+            self.logger.error(f"Timeout occurred. Error: {str(e)}")
             raise
         except requests.exceptions.TooManyRedirects as e:
-            self.logger.error("Too many redirects! Error: " + str(e))
+            self.logger.error(f"Too many redirects! Error: {str(e)}")
             raise
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
             raise
         return {"query": [r.json()]}

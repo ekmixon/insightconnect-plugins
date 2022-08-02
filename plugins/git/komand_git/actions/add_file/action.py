@@ -21,20 +21,20 @@ class AddFile(komand.Action):
         git_repository = self.connection.git_repository
         result = {}
 
-        self.logger.info("Run: Adding {} to repository".format(file_path))
+        self.logger.info(f"Run: Adding {file_path} to repository")
         try:
             file_contents = base64.b64decode(file_contents)
             git_repository.create_file(file_path, file_contents)
             git_repository.add(file_path)
-            commit_hash = git_repository.commit("Add new file {}".format(file_path))
+            commit_hash = git_repository.commit(f"Add new file {file_path}")
             result["commit_id"] = commit_hash
             git_repository.push()
 
-            self.logger.info("Run: File {} added successfully".format(file_path))
+            self.logger.info(f"Run: File {file_path} added successfully")
             result["commit_url"] = git_repository.get_commit_url(commit_hash)
             result["success"] = True
         except Exception as e:
-            self.logger.error("AddFile: Exception: Failed to add {}:\n{}".format(file_path, str(e)))
+            self.logger.error(f"AddFile: Exception: Failed to add {file_path}:\n{str(e)}")
             result["success"] = False
 
         return komand.helper.clean_dict(result)

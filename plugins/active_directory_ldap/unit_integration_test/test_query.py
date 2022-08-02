@@ -46,4 +46,3 @@ class TestQuery(TestCase):
             actual.get("distinguishedName"),
             'CN=Bob "Sponge,Pants" (somestuff),OU=Test Users,OU=User,DC=intad,DC=dslab,DC=internal',
         )
-        pass

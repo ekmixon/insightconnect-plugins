@@ -17,7 +17,7 @@ class CreateTrustedHost(komand.Action):
             params, ["name", "address", "group_name", "mask", "address_version"]
         )
 
-        action = action + "/" + params.get("group_name") + "/trusted_hosts"
+        action = f"{action}/" + params.get("group_name") + "/trusted_hosts"
 
         r = self.connection.connector.post(
             action,

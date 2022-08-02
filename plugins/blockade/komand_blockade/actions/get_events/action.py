@@ -13,7 +13,7 @@ class GetEvents(komand.Action):
         )
 
     def run(self, params={}):
-        url = self.connection.url + "/admin/get-events"
+        url = f"{self.connection.url}/admin/get-events"
         data = self.connection.data
         try:
             resp = requests.get(headers=self.connection.headers, json=data, url=url)
@@ -26,7 +26,7 @@ class GetEvents(komand.Action):
             raise
 
     def test(self):
-        url = self.connection.url + "/get-indicators"
+        url = f"{self.connection.url}/get-indicators"
         try:
             resp = requests.get(headers=self.connection.headers, url=url)
             if resp.status_code == 200:

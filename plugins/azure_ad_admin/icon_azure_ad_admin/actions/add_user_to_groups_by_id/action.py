@@ -32,7 +32,7 @@ class AddUserToGroupsById(komand.Action):
                 f"https://graph.microsoft.com/v1.0/{self.connection.tenant}/groups/{group_id}/members/$ref"
             )
             result = requests.post(add_to_group_endpoint, json=user, headers=headers)
-            if not result.status_code == 204:
+            if result.status_code != 204:
                 raise PluginException(
                     cause=f"Add User to Group call returned an unexpected response: {result.status_code}",
                     assistance=f"Check that the group id {group_id} and user id {user_id} are correct.",

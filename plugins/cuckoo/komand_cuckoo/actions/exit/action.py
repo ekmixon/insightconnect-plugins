@@ -17,16 +17,15 @@ class Exit(komand.Action):
 
     def run(self, params={}):
         server = self.connection.server
-        endpoint = server + "/exit"
+        endpoint = f"{server}/exit"
 
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

@@ -18,9 +18,10 @@ class GetIssuesByRepo(komand.Action):
             title = params.get("title")
             owner = params.get("owner")
             results = requests.get(
-                "https://api.github.com/repos/" + owner + "/" + title + "/issues",
+                f"https://api.github.com/repos/{owner}/{title}/issues",
                 auth=self.connection.basic_auth,
             )
+
             return {"issues": utils.clean(results.json())}
         except Exception as e:
             self.logger.error("Could not retrieve specified repo's issues. Error: " + str(e))

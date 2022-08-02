@@ -17,7 +17,7 @@ class UpdateSecurityPolicy(komand.Action):
         if not policy_id:
             self.connection.connector.raise_error("Empty argument policy_id")
 
-        action = action + "/" + policy_id
+        action = f"{action}/{policy_id}"
 
         r = self.connection.connector.put(
             action,

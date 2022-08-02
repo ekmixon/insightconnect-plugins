@@ -18,7 +18,7 @@ class UpdateTrustedHost(komand.Action):
         if not name or not group_name:
             self.connection.connector.raise_error("Policy ID, attack group ID and attack ID can't be empty")
 
-        action = action + "/" + group_name + "/trusted_hosts/" + name
+        action = f"{action}/{group_name}/trusted_hosts/{name}"
 
         del params["name"]
         del params["group_name"]

@@ -15,18 +15,6 @@ class GetIndicatorDetails(komand.Action):
         )
 
     def run(self, params={}):
-        # for results that are not retrieving full details
-        output_template = {
-            "general": {},
-            "geo": {},
-            "reputation": {},
-            "url_list": {},
-            "passive_dns": {},
-            "malware": {},
-            "nids_list": {},
-            "http_scans": {},
-        }
-
         indicator_type = get_indicatortypes(params.get(Input.INDICATOR_TYPE))
         indicator = params.get(Input.INDICATOR)
         section = params.get(Input.SECTION)
@@ -40,7 +28,17 @@ class GetIndicatorDetails(komand.Action):
         results = self.connection.client.get_indicator_details_by_section(
             indicator_type=indicator_type, indicator=indicator, section=section
         )
-        output_template[section] = results
+        output_template = {
+            "general": {},
+            "geo": {},
+            "reputation": {},
+            "url_list": {},
+            "passive_dns": {},
+            "malware": {},
+            "nids_list": {},
+            "http_scans": {},
+            section: results,
+        }
 
         clean_results = komand.helper.clean(output_template)
 

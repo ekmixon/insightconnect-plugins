@@ -23,11 +23,10 @@ class RerunReport(komand.Action):
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

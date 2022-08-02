@@ -22,7 +22,7 @@ class CreateIssue(komand.Action):
                 "kind": ("bug" if params.get(Input.KIND) == "None" else params.get(Input.KIND)),
                 "state": ("new" if params.get(Input.STATE) == "None" else params.get(Input.STATE)),
             }
-            issue = dict((keys, v.lower()) for keys, v in issue.items())
+            issue = {keys: v.lower() for keys, v in issue.items()}
 
             if params.get(Input.CONTENT):
                 issue["content"] = {"raw": params.get(Input.CONTENT)}

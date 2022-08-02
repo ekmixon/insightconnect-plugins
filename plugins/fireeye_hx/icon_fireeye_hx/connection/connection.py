@@ -30,18 +30,17 @@ class Connection(komand.Connection):
 
         if response.status_code == 200:
             return {"status": "success"}
-        else:
-            try:
-                details = response.json()["details"][0]
-                code, message = details["code"], details["message"]
+        try:
+            details = response.json()["details"][0]
+            code, message = details["code"], details["message"]
 
-                raise ConnectionTestException(cause=f"Reason: {message} (error code {code}")
+            raise ConnectionTestException(cause=f"Reason: {message} (error code {code}")
 
-            except JSONDecodeError as e:
-                raise ConnectionTestException(
-                    cause=f"Malformed response received from FireEye HX appliance. " f"Got: {response.text}"
-                ) from e
-            except (KeyError, IndexError) as e:
-                raise ConnectionTestException(
-                    cause="Unknown error received from FireEye HX appliance " "(no error cause reported)."
-                ) from e
+        except JSONDecodeError as e:
+            raise ConnectionTestException(
+                cause=f"Malformed response received from FireEye HX appliance. " f"Got: {response.text}"
+            ) from e
+        except (KeyError, IndexError) as e:
+            raise ConnectionTestException(
+                cause="Unknown error received from FireEye HX appliance " "(no error cause reported)."
+            ) from e

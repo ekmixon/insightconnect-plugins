@@ -42,10 +42,14 @@ class ResourceHelper(object):
 
             if not params:
                 params = {}
-            if not payload:
-                response = request_method(url=endpoint, params=params, verify=False)
-            else:
-                response = request_method(url=endpoint, params=params, json=payload, verify=False)
+            response = (
+                request_method(
+                    url=endpoint, params=params, json=payload, verify=False
+                )
+                if payload
+                else request_method(url=endpoint, params=params, verify=False)
+            )
+
         except requests.RequestException as e:
             self.logger.error(e)
             raise

@@ -14,7 +14,7 @@ def preprocess_expression(expression):
 
 # Run awk on text for pattern, return stdout
 def process_lines(log, text, expression):
-    cmd = 'echo "{}" | {} {}'.format(text, awk, expression)
+    cmd = f'echo "{text}" | {awk} {expression}'
     log.info("ProcessLines: awk %s", expression)
     r = komand.helper.exec_command(cmd)
     return r["stdout"]

@@ -77,8 +77,7 @@ class Auth(client.Client):
             "user_id": user_id,
             "activation_code": activation_code,
         }
-        response = self.json_api_call("POST", "/auth/v2/enroll_status", params)
-        return response
+        return self.json_api_call("POST", "/auth/v2/enroll_status", params)
 
     def preauth(self, username=None, user_id=None, ipaddr=None, trusted_device_token=None):
         """
@@ -95,8 +94,7 @@ class Auth(client.Client):
             params["ipaddr"] = ipaddr
         if trusted_device_token is not None:
             params["trusted_device_token"] = trusted_device_token
-        response = self.json_api_call("POST", "/auth/v2/preauth", params)
-        return response
+        return self.json_api_call("POST", "/auth/v2/preauth", params)
 
     def auth(
         self,
@@ -149,8 +147,7 @@ class Auth(client.Client):
             params["device"] = device
         if passcode is not None:
             params["passcode"] = passcode
-        response = self.json_api_call("POST", "/auth/v2/auth", params)
-        return response
+        return self.json_api_call("POST", "/auth/v2/auth", params)
 
     def auth_status(self, txid):
         """

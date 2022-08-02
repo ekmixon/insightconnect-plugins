@@ -36,7 +36,7 @@ class RemoveUserFromGroup(komand.Action):
         )
         result = requests.delete(remove_from_group_endpoint, headers=headers)
 
-        if not result.status_code == 204:
+        if result.status_code != 204:
             raise PluginException(
                 cause=f"Delete User from Group call returned an unexpected response: {result.status_code}",
                 assistance=f"Check that the group name {group_name} and user id {user_id} are correct.",

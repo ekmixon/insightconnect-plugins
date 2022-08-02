@@ -22,7 +22,6 @@ class SaveImageVm(komand.Action):
             token = self.connection.token
             api_version = self.connection.api_version
 
-            data = {}
             # Get request parameter
             vm = params.get(Input.VM)
             subscription_id = params.get(Input.SUBSCRIPTIONID)
@@ -32,9 +31,11 @@ class SaveImageVm(komand.Action):
             destination_container_name = params.get(Input.DESTINATIONCONTAINERNAME, "")
             overwrite_vhds = params.get(Input.OVERWRITEVHDS, "")
 
-            data["vhdPrefix"] = vhd_prefix
-            data["destinationContainerName"] = destination_container_name
-            data["overwriteVhds"] = overwrite_vhds
+            data = {
+                "vhdPrefix": vhd_prefix,
+                "destinationContainerName": destination_container_name,
+                "overwriteVhds": overwrite_vhds,
+            }
 
             url = (
                 f"{server}/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft"
@@ -46,15 +47,15 @@ class SaveImageVm(komand.Action):
                 url,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer %s" % token,
+                    "Authorization": f"Bearer {token}",
                 },
                 data=json.dumps(data),
             )
 
+
             status_code = resp.status_code
             return {Output.STATUS_CODE: status_code}
 
-        # Handle exception
         except requests.exceptions.HTTPError as e:
             raise PluginException(cause="HTTP Error", assistance=str(e))
         except Exception:

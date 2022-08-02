@@ -32,11 +32,7 @@ class GetLogs(komand.Action):
         token_id = params.get(Input.TOKEN_ID)
         webauthnkey = params.get(Input.WEBAUTHNKEY)
 
-        if params.get(Input.MAXTIME):
-            max_time = params.get(Input.MAXTIME)
-        else:
-            max_time = int(round(time.time() * 1000))
-
+        max_time = params.get(Input.MAXTIME) or int(round(time.time() * 1000))
         event_types = self.input_validation(params.get(Input.EVENT_TYPES), PossibleInputs.possible_event_types)
         factors = self.input_validation(params.get(Input.FACTORS), PossibleInputs.possible_factors)
         reasons = self.input_validation(params.get(Input.REASONS), PossibleInputs.possible_reasons)

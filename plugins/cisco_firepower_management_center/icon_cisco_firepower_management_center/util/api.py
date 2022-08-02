@@ -24,13 +24,13 @@ class CiscoFirePowerApi:
         self.domain_uuid = self.find_domain_uuid()
 
     def create_address_object(self, object_type: str, payload: dict) -> dict:
-        if object_type == "ipv4" or object_type == "ipv6":
+        if object_type in {"ipv4", "ipv6"}:
             endpoint = "hosts"
-        if object_type == "fqdn":
-            endpoint = "fqdns"
         if object_type == "cidr":
             endpoint = "networks"
 
+        elif object_type == "fqdn":
+            endpoint = "fqdns"
         return self._call_api("POST", f"fmc_config/v1/domain/{self.domain_uuid}/object/{endpoint}", json_data=payload)
 
     def get_address_objects(self, endpoint: str) -> dict:
@@ -46,28 +46,39 @@ class CiscoFirePowerApi:
         return self.run_with_pages(f"fmc_config/v1/domain/{self.domain_uuid}/object/networkaddresses", expanded=True)
 
     def find_network_object(self, address_object: str) -> dict:
-        for item in self.get_network_addresses():
-            if item.get("name") == address_object or item.get("value") == address_object:
-                return item
-
-        return {}
+        return next(
+            (
+                item
+                for item in self.get_network_addresses()
+                if item.get("name") == address_object
+                or item.get("value") == address_object
+            ),
+            {},
+        )
 
     def get_network_address(self, network_address_name: str) -> dict:
-        for item in self.get_network_addresses():
-            if item.get("name") == network_address_name or item.get("objectId") == network_address_name:
-                return item
-
-        return {}
+        return next(
+            (
+                item
+                for item in self.get_network_addresses()
+                if item.get("name") == network_address_name
+                or item.get("objectId") == network_address_name
+            ),
+            {},
+        )
 
     def get_address_groups(self) -> list:
         return self.run_with_pages(f"fmc_config/v1/domain/{self.domain_uuid}/object/networkgroups", expanded=True)
 
     def get_address_group(self, group_name: str) -> dict:
-        for item in self.get_address_groups():
-            if item.get("name") == group_name:
-                return item
-
-        return {}
+        return next(
+            (
+                item
+                for item in self.get_address_groups()
+                if item.get("name") == group_name
+            ),
+            {},
+        )
 
     def update_address_group(self, payload):
         return self._call_api(
@@ -79,7 +90,7 @@ class CiscoFirePowerApi:
     def run_with_pages(self, path: str, expanded: bool = False) -> list:
         objects = []
         limit = 100
-        for page in range(0, 9999):
+        for page in range(9999):
             params = {"limit": limit, "offset": page * limit}
             if expanded:
                 params["expanded"] = True
@@ -135,7 +146,7 @@ class CiscoFirePowerApi:
             verify=self.verify_ssl,
         )
 
-        if not response.status_code == 204:
+        if response.status_code != 204:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
 
         return response.headers.get("X-auth-access-token")
@@ -146,8 +157,7 @@ class CiscoFirePowerApi:
         for domain in domains:
             if domain.get("name") == self.domain:
                 return domain.get("uuid")
-        else:
-            raise PluginException(
-                cause="Unable to find Domain provided.",
-                assistance="Please validate the domain name provided and try again.",
-            )
+        raise PluginException(
+            cause="Unable to find Domain provided.",
+            assistance="Please validate the domain name provided and try again.",
+        )

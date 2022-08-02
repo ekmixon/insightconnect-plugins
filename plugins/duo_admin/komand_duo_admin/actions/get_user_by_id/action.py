@@ -16,7 +16,6 @@ class GetUserById(komand.Action):
     def run(self, params={}):
         try:
             user = self.connection.admin_api.get_user_by_id(params.get(Input.USER_ID))
-            results = komand.helper.clean({Output.USER: user})
-            return results
+            return komand.helper.clean({Output.USER: user})
         except KeyError as e:
             self.logger.error(f"User not found. Error: {str(e)}")

@@ -115,5 +115,4 @@ class Finger(komand.Action):
             Output.STATUS: d["Plugin Status"],
         }
 
-        results = komand.helper.clean_dict(output)
-        return results
+        return komand.helper.clean_dict(output)

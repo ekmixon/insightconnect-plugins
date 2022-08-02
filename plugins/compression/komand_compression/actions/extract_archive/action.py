@@ -30,9 +30,12 @@ class ExtractArchive(komand.Action):
             for fil in decompressed_file:
                 decompressed_file_b64 = utils.base64_encode(decompressed_file[fil])
                 decompressed_file_b64_string[fil.split("/")[-1]] = decompressed_file_b64.decode("utf-8")
-            for key in decompressed_file_b64_string.keys():
-                if key != fname:
-                    return_array.append({"filename": key, "content": decompressed_file_b64_string[key]})
+            return_array.extend(
+                {"filename": key, "content": value}
+                for key, value in decompressed_file_b64_string.items()
+                if key != fname
+            )
+
         else:
             decompressed_file_b64 = utils.base64_encode(decompressed_file)
             decompressed_file_b64_string = decompressed_file_b64.decode("utf-8")

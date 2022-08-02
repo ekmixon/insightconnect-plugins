@@ -20,26 +20,24 @@ class ListTasks(komand.Action):
 
         if params.get("offset", ""):
             offset = params.get("offset", "")
-            limit = params.get("limit", "")
-            if limit:
+            if limit := params.get("limit", ""):
                 endpoint = server + "/tasks/list/%d/%d" % (limit, offset)
             else:
-                endpoint = server + "/tasks/list"
+                endpoint = f"{server}/tasks/list"
         elif params.get("limit", ""):
             limit = params.get("limit", "")
             endpoint = server + "/tasks/list/%d" % (limit)
         else:
-            endpoint = server + "/tasks/list"
+            endpoint = f"{server}/tasks/list"
 
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
             response = r.json()
-            result = {"tasks": response}
-            return result
+            return {"tasks": response}
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         return {"tasks": [self.connection.test()]}

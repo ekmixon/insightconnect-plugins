@@ -19,20 +19,20 @@ class SubmitFiles(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         files = params.get("files")
-        endpoint = server + "/tasks/create/file"
-        file_list = []
+        endpoint = f"{server}/tasks/create/file"
+        file_list = [
+            ("file", (f["filename"], base64.b64decode(f["contents"])))
+            for f in files
+        ]
 
-        for f in files:
-            file_list.append(("file", (f["filename"], base64.b64decode(f["contents"]))))
 
         try:
             r = requests.post(endpoint, files=file_list)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

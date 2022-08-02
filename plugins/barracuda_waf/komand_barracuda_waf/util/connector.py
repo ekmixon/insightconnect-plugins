@@ -5,7 +5,7 @@ import json
 class Connector:
     def __init__(self, rest_url, action):
         self._token = ""
-        self._url = rest_url + "/restapi/v1/"
+        self._url = f"{rest_url}/restapi/v1/"
         self._verify = False
         self._headers = {"Content-type": "application/json"}
         self._status_code = 0
@@ -16,7 +16,7 @@ class Connector:
 
     def raise_error_when_not_in_status(self, status_code):
         if self._status_code != status_code:
-            self.raise_error("Wrong returned status - " + str(self._status_code))
+            self.raise_error(f"Wrong returned status - {str(self._status_code)}")
 
     def get_code(self):
         return self._status_code
@@ -41,7 +41,7 @@ class Connector:
 
         for name in names:
             if not params.get(name):
-                self.raise_error("Required param: " + name)
+                self.raise_error(f"Required param: {name}")
 
     def raise_error(self, msg):
         self.logger.info(msg)
@@ -50,11 +50,7 @@ class Connector:
     def request(self, action, method, params=None):
         r = {}
         action_url = self._url + action
-        if self._token == "":
-            auth = None
-        else:
-            auth = (self._token, "")
-
+        auth = None if self._token == "" else (self._token, "")
         try:
             if method == "post":
                 r = requests.post(
@@ -84,21 +80,13 @@ class Connector:
         return r.json()
 
     def post(self, action, params):
-        r_json = self.request(action, "post", params)
-
-        return r_json
+        return self.request(action, "post", params)
 
     def put(self, action, params):
-        r_json = self.request(action, "put", params)
-
-        return r_json
+        return self.request(action, "put", params)
 
     def get(self, action, params=None):
-        r_json = self.request(action, "get", params)
-
-        return r_json
+        return self.request(action, "get", params)
 
     def delete(self, action):
-        r_json = self.request(action, "delete")
-
-        return r_json
+        return self.request(action, "delete")

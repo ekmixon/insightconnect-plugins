@@ -82,10 +82,7 @@ class DarkTraceAPI:
                 raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
 
             if 200 <= response.status_code < 300:
-                if response.text:
-                    return response.json()
-                return {}
-
+                return response.json() if response.text else {}
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
         except json.decoder.JSONDecodeError as e:
             raise PluginException(preset=PluginException.Preset.INVALID_JSON, data=e)

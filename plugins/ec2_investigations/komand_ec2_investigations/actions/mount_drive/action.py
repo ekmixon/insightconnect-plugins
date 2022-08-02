@@ -25,13 +25,10 @@ class MountDrive(komand.Action):
         region = params.get("region")
         empty_json_output = {}
 
-        # Create private key file
-        f = open("./pk.pem", "w")
-        f.write(private_key)
-        f.close()
-
+        with open("./pk.pem", "w") as f:
+            f.write(private_key)
         # Create command from user input
-        command = "sudo ./mount.sh " + directory + " " + device
+        command = f"sudo ./mount.sh {directory} {device}"
 
         try:
             # Connect to AWS instance

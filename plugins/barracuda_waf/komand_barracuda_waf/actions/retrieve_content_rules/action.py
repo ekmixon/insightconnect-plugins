@@ -17,11 +17,11 @@ class RetrieveContentRules(komand.Action):
         if not virtual_service_id:
             self.connection.connector.raise_error("Empty argument virtual_service_id")
 
-        action = action + "/" + virtual_service_id + "/content_rules"
+        action = f"{action}/{virtual_service_id}/content_rules"
 
         rule_id = params.get("rule_id")
         if rule_id:
-            action = action + "/" + rule_id
+            action = f"{action}/{rule_id}"
 
         r = self.connection.connector.get(action)
         self.connection.connector.raise_error_when_not_in_status(200)

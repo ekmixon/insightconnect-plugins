@@ -20,5 +20,5 @@ class SubmitUrl(komand.Action):
             "tags": params.get(Input.TAGS),
             "vm": params.get(Input.VM),
         }
-        files = {"sample": "[InternetShortcut]\nURL={}".format(params.get(Input.URL))}
+        files = {"sample": f"[InternetShortcut]\nURL={params.get(Input.URL)}"}
         return {Output.RESULTS: komand.helper.clean(self.connection.api.submit_sample(data=data, files=files))}

@@ -28,10 +28,12 @@ class RrHistoryIp(komand.Action):
 
         try:
             type = params.get("type")
-            if not type:
-                rr_history = self.connection.investigate.rr_history(IP)
-            else:
-                rr_history = self.connection.investigate.rr_history(IP, type)
+            rr_history = (
+                self.connection.investigate.rr_history(IP, type)
+                if type
+                else self.connection.investigate.rr_history(IP)
+            )
+
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 

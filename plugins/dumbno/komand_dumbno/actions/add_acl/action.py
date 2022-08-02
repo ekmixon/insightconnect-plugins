@@ -20,9 +20,7 @@ class AddAcl(komand.Action):
             dport=params.get("dport"),
             proto=params.get("proto"),
         )
-        if result == "ok":
-            return {"success": True}
-        return {"success": False}
+        return {"success": True} if result == "ok" else {"success": False}
 
     def test(self):
         """TODO: Test action"""

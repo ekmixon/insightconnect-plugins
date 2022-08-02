@@ -26,5 +26,4 @@ class GetUserStatus(komand.Action):
                 continue
 
             return {Output.STATUS: user["status"], Output.USER_ID: user["user_id"]}
-        else:
-            raise PluginException(preset=PluginException.Preset.NOT_FOUND, data="Error: No users exist!")
+        raise PluginException(preset=PluginException.Preset.NOT_FOUND, data="Error: No users exist!")

@@ -20,10 +20,9 @@ class MockBoxConnection:
     def make_request(self, type, url):
         if "8830457340" in url:
             return MockBoxResponse()
-        else:
-            response = MockBoxResponse()
-            response.ok = False
-            return response
+        response = MockBoxResponse()
+        response.ok = False
+        return response
 
 
 class MockConnection:

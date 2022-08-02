@@ -8,7 +8,7 @@ def connectivity_test(connection: Connection) -> object:
     :param connection: Komand Connection object with a valid connection
     :return: Response from the Cherwell server
     """
-    service_info_url = connection.base_url() + "/api/V1/serviceinfo"
+    service_info_url = f"{connection.base_url()}/api/V1/serviceinfo"
     response = connection.session().get(service_info_url)
 
     if response.status_code not in range(200, 299):

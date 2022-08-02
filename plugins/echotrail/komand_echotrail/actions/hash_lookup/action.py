@@ -19,7 +19,7 @@ class HashLookup(komand.Action):
         ret = {}
         server = self.connection.server
         token = self.connection.token
-        url = server + "/v1/private/insights/%s" % params.get("hash")
+        url = server + f'/v1/private/insights/{params.get("hash")}'
         headers = {"X-Api-Key": token}
         response = requests.get(url, headers=headers)
 

@@ -15,8 +15,7 @@ class GetPage(komand.Action):
         """Return a page."""
         page = params["page"]
         space = params["space"]
-        p = self.connection.client.getPage(page, space)
-        if p:
+        if p := self.connection.client.getPage(page, space):
             p = util.normalize_page(p)
             return {"page": p, "found": True}
 

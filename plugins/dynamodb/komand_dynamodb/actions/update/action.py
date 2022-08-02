@@ -22,11 +22,11 @@ class Update(komand.Action):
         props = {}
         exp = "set "
         for key in data:
-            pkey = ":" + key
+            pkey = f":{key}"
             # Need to prep the data by prefixing the : so it meets the search api expectation
             props[pkey] = data[key]
             # Append to the expression
-            exp += key + " = " + pkey + ","
+            exp += f"{key} = {pkey},"
         exp = exp[:-1]  # Chop off the trailing comma
         kwargs = {
             "Key": pk,

@@ -36,19 +36,14 @@ class DeleteAsset(insightconnect_plugin_runtime.Action):
 
                 if device_obj:
                     # Device was found in Cylance
-                    if whitelist:
-                        # Any whitelisted devices will not be deleted
-                        matches = find_in_whitelist(device_obj, whitelist)
-                        if matches:
-                            self.logger.info(f"{agent} found in whitelist. Will not delete.")
-                            invalid_devices.append(agent)
-                        else:
-                            valid_devices.append(agent)
-                            valid_ids = self.add_to_valid_devices(device_obj, valid_ids)
+                    if whitelist and (
+                        matches := find_in_whitelist(device_obj, whitelist)
+                    ):
+                        self.logger.info(f"{agent} found in whitelist. Will not delete.")
+                        invalid_devices.append(agent)
                     else:
                         valid_devices.append(agent)
                         valid_ids = self.add_to_valid_devices(device_obj, valid_ids)
-            # Device was not found, therefore invalid to delete
             except PluginException:
                 self.logger.info(f"{agent} device was not found.")
                 invalid_devices.append(agent)
@@ -56,22 +51,22 @@ class DeleteAsset(insightconnect_plugin_runtime.Action):
         if not valid_ids:
             raise PluginException(
                 cause="No valid devices to delete.",
-                assistance=f"Be sure that the devices exist in Cylance and are not part of the whitelist.",
+                assistance="Be sure that the devices exist in Cylance and are not part of the whitelist.",
             )
+
 
         payload = {"device_ids": valid_ids}
-        success = self.connection.client.delete_devices(payload)
-        if not success:
+        if success := self.connection.client.delete_devices(payload):
+            return {
+                Output.SUCCESS: True,
+                Output.DELETED: valid_devices,
+                Output.NOT_DELETED: invalid_devices,
+            }
+        else:
             raise PluginException(
                 cause="One of the devices failed to delete.",
-                assistance=f"A valid agent deletion may have failed, check your Cylance console.",
+                assistance="A valid agent deletion may have failed, check your Cylance console.",
             )
-
-        return {
-            Output.SUCCESS: True,
-            Output.DELETED: valid_devices,
-            Output.NOT_DELETED: invalid_devices,
-        }
 
     @staticmethod
     def add_to_valid_devices(device_obj, valid_ids):

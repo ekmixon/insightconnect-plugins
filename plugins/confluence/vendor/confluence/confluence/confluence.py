@@ -31,7 +31,7 @@ def attach_file(server, token, space, title, files):
         try:
             server.confluence1.removeAttachment(token, existing_page["id"], filename)
         except Exception as e:
-            logging.exception("Skipping %s exception in removeAttachment" % e)
+            logging.exception(f"Skipping {e} exception in removeAttachment")
         content_types = {
             "gif": "image/gif",
             "png": "image/png",
@@ -66,12 +66,10 @@ def remove_all_attachments(server, token, space, title):
 
     # Iterate through them all, removing each
     numfiles = len(files)
-    i = 0
-    for f in files:
+    for i, f in enumerate(files):
         filename = f["fileName"]
         logging.debug("Removing %d of %d (%s)..." % (i, numfiles, filename))
         server.confluence1.removeAttachment(token, existing_page["id"], filename)
-        i += 1
 
 
 def write_page(server, token, space, title, content, parent=None):
@@ -80,7 +78,7 @@ def write_page(server, token, space, title, content, parent=None):
         try:
             # Find out the ID of the parent page
             parent_id = server.confluence1.getPage(token, space, parent)["id"]
-            logging.debug("parent page id is %s" % parent_id)
+            logging.debug(f"parent page id is {parent_id}")
         except:
             logging.debug("couldn't find parent page; ignoring error...")
 
@@ -165,13 +163,12 @@ class Confluence(object):
         config_file = findfile("config.ini")
         logging.debug(config_file)
 
-        if not profile:
-            if config_file:
-                config.read(config_file)
-                try:
-                    profile = config.get("general", "default-confluence-profile")
-                except ConfigParser.NoOptionError:
-                    pass
+        if not profile and config_file:
+            config.read(config_file)
+            try:
+                profile = config.get("general", "default-confluence-profile")
+            except ConfigParser.NoOptionError:
+                pass
 
         if profile:
             if config_file:
@@ -182,9 +179,9 @@ class Confluence(object):
                 appid = config.get(profile, "appid")
             else:
                 raise EnvironmentError(
-                    "%s was not able to locate the config.ini file in current directory, user home directory or PYTHONPATH."
-                    % __name__
+                    f"{__name__} was not able to locate the config.ini file in current directory, user home directory or PYTHONPATH."
                 )
+
 
         options = Confluence.DEFAULT_OPTIONS
         options["server"] = url
@@ -280,11 +277,11 @@ class Confluence(object):
         :param space: The space name
         :type  space: ``str``
         """
-        if self._token2:
-            entries = self._server.confluence2.getBlogEntries(self._token2, space)
-        else:
-            entries = self._server.confluence1.getBlogEntries(self._token, space)
-        return entries
+        return (
+            self._server.confluence2.getBlogEntries(self._token2, space)
+            if self._token2
+            else self._server.confluence1.getBlogEntries(self._token, space)
+        )
 
     def getBlogEntry(self, pageId):
         """
@@ -292,11 +289,11 @@ class Confluence(object):
 
         :param pageId:
         """
-        if self._token2:
-            entry = self._server.confluence2.getBlogEntry(self._token2, pageId)
-        else:
-            entry = self._server.confluence1.getBlogEntries(self._token, pageId)
-        return entry
+        return (
+            self._server.confluence2.getBlogEntry(self._token2, pageId)
+            if self._token2
+            else self._server.confluence1.getBlogEntries(self._token, pageId)
+        )
 
     def storeBlogEntry(self, entry):
         """
@@ -309,11 +306,11 @@ class Confluence(object):
         :rtype: ``bool``
         :return: `true` if succeeded
         """
-        if self._token2:
-            blogEntry = self._server.confluence2.storeBlogEntry(self._token2, entry)
-        else:
-            blogEntry = self._server.confluence1.storeBlogEntry(self._token2, entry)
-        return blogEntry
+        return (
+            self._server.confluence2.storeBlogEntry(self._token2, entry)
+            if self._token2
+            else self._server.confluence1.storeBlogEntry(self._token2, entry)
+        )
 
     def addLabelByName(self, labelName, objectId):
         """
@@ -328,11 +325,15 @@ class Confluence(object):
         :rtype: ``bool``
         :return: True if succeeded
         """
-        if self._token2:
-            ret = self._server.confluence2.addLabelByName(self._token2, labelName, objectId)
-        else:
-            ret = self._server.confluence1.addLabelByName(self._token, labelName, objectId)
-        return ret
+        return (
+            self._server.confluence2.addLabelByName(
+                self._token2, labelName, objectId
+            )
+            if self._token2
+            else self._server.confluence1.addLabelByName(
+                self._token, labelName, objectId
+            )
+        )
 
     def getPageId(self, page, space):
         """

@@ -37,17 +37,15 @@ class UpdateDocument(insightconnect_plugin_runtime.Action):
         if version:
             query_params["version"] = str(version)
 
-        results = self.connection.client.update(
+        if results := self.connection.client.update(
             index=index,
             _id=id_,
             _type=clean_params.get(Input.TYPE),
             params=query_params,
             script=clean_params.get(Input.SCRIPT),
-        )
-
-        if not results:
+        ):
+            return {Output.UPDATE_RESPONSE: insightconnect_plugin_runtime.helper.clean(results)}
+        else:
             raise PluginException(
                 cause="Document was not updated", assistance="Please check provided data and try again."
             )
-        else:
-            return {Output.UPDATE_RESPONSE: insightconnect_plugin_runtime.helper.clean(results)}

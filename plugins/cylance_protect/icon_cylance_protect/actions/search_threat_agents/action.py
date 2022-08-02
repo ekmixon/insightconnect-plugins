@@ -40,8 +40,7 @@ class SearchThreatAgents(insightconnect_plugin_runtime.Action):
         while i <= total_pages:
             response = self.connection.client.get_threat_devices(sha256, i, "200")
             device_list = response.get("page_items")
-            for device in device_list:
-                agents.append(device)
+            agents.extend(iter(device_list))
             i += 1
 
         return agents

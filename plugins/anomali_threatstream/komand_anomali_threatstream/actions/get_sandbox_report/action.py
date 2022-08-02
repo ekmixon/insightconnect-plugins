@@ -52,10 +52,7 @@ class GetSandboxReport(komand.Action):
 
         domains = []
         for domain in domains_detail:
-            for key, value in domain.items():
-                if key == "domain":
-                    domains.append(value)
-
+            domains.extend(value for key, value in domain.items() if key == "domain")
         report = {
             "signatures": signatures,
             "screenshots": screenshots,

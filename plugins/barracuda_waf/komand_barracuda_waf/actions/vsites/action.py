@@ -15,7 +15,7 @@ class Vsites(komand.Action):
         action = "vsites"
         vsite_id = params.get("id")
         if vsite_id:
-            action = action + "/" + vsite_id
+            action = f"{action}/{vsite_id}"
         r = self.connection.connector.get(action)
 
         self.connection.connector.raise_error_when_not_in_status(200)

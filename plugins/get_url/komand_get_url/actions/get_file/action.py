@@ -48,10 +48,9 @@ class GetFile(komand.Action):
             contents = url_object.read(8388608).decode("utf-8")
 
             # Optional integrity check of file
-            if checksum:
-                if not komand.helper.check_hashes(contents, checksum):
-                    self.logger.error("GetFile: File Checksum Failed")
-                    raise PluginException(cause="GetURL Failed", assistance="File Checksum Failed")
+            if checksum and not komand.helper.check_hashes(contents, checksum):
+                self.logger.error("GetFile: File Checksum Failed")
+                raise PluginException(cause="GetURL Failed", assistance="File Checksum Failed")
 
             # Write etag and last modified to cache
             utils.create_url_meta_file(meta, url_object)
@@ -63,8 +62,7 @@ class GetFile(komand.Action):
 
             # Check URL status code and return file contents
             if url_object.code is None or url_object.code >= 200 or url_object.code <= 299:
-                f = komand.helper.encode_string(contents)
-                if f:
+                if f := komand.helper.encode_string(contents):
                     return {
                         Output.BYTES: f.decode("utf-8"),
                         Output.STATUS_CODE: url_object.code or 200,

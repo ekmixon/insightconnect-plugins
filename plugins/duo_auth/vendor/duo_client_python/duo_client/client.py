@@ -46,8 +46,13 @@ def canon_params(params):
     # http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
     args = []
     for (key, vals) in sorted((six.moves.urllib.parse.quote(key, "~"), vals) for (key, vals) in list(params.items())):
-        for val in sorted(six.moves.urllib.parse.quote(val, "~") for val in vals):
-            args.append("%s=%s" % (key, val))
+        args.extend(
+            f"{key}={val}"
+            for val in sorted(
+                six.moves.urllib.parse.quote(val, "~") for val in vals
+            )
+        )
+
     return "&".join(args)
 
 
@@ -97,7 +102,7 @@ def canonicalize(method, host, uri, params, date, sig_version):
             hashlib.sha512(params.encode("utf-8")).hexdigest(),
         ]
     else:
-        raise ValueError("Unknown signature version: {}".format(sig_version))
+        raise ValueError(f"Unknown signature version: {sig_version}")
     return "\n".join(canon)
 
 
@@ -112,14 +117,14 @@ def sign(ikey, skey, method, host, uri, date, sig_version, params, digestmod=has
         canonical = canonical.encode("utf-8")
 
     sig = hmac.new(skey, canonical, digestmod)
-    auth = "%s:%s" % (ikey, sig.hexdigest())
+    auth = f"{ikey}:{sig.hexdigest()}"
 
     if isinstance(auth, six.text_type):
         auth = auth.encode("utf-8")
     b64 = base64.b64encode(auth)
     if not isinstance(b64, six.text_type):
         b64 = b64.decode("utf-8")
-    return "Basic %s" % b64
+    return f"Basic {b64}"
 
 
 def normalize_params(params):
@@ -130,31 +135,21 @@ def normalize_params(params):
     # urllib cannot handle unicode strings properly. quote() excepts,
     # and urlencode() replaces them with '?'.
     def encode(value):
-        if isinstance(value, six.text_type):
-            return value.encode("utf-8")
-        return value
+        return value.encode("utf-8") if isinstance(value, six.text_type) else value
 
     def to_list(value):
         if value is None or isinstance(value, six.string_types):
             return [value]
         return value
 
-    return dict((encode(key), [encode(v) for v in to_list(value)]) for (key, value) in list(params.items()))
+    return {
+        encode(key): [encode(v) for v in to_list(value)]
+        for (key, value) in list(params.items())
+    }
 
 
 class Client(object):
-    def __init__(
-        self,
-        ikey,
-        skey,
-        host,
-        ca_certs=DEFAULT_CA_CERTS,
-        sig_timezone="UTC",
-        user_agent=("Duo API Python/" + __version__),
-        timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-        digestmod=hashlib.sha1,
-        sig_version=2,
-    ):
+    def __init__(self, ikey, skey, host, ca_certs=DEFAULT_CA_CERTS, sig_timezone="UTC", user_agent=f"Duo API Python/{__version__}", timeout=socket._GLOBAL_DEFAULT_TIMEOUT, digestmod=hashlib.sha1, sig_version=2):
         """
         ca_certs - Path to CA pem file.
         """
@@ -188,7 +183,7 @@ class Client(object):
         None - Disable proxy.
         """
         if proxy_type not in ("CONNECT", None):
-            raise NotImplementedError("proxy_type=%s" % (proxy_type,))
+            raise NotImplementedError(f"proxy_type={proxy_type}")
         self.proxy_headers = headers
         self.proxy_host = host
         self.proxy_port = port
@@ -248,7 +243,7 @@ class Client(object):
             uri = path
         else:
             body = None
-            uri = path + "?" + six.moves.urllib.parse.urlencode(params, doseq=True)
+            uri = f"{path}?{six.moves.urllib.parse.urlencode(params, doseq=True)}"
 
         encoded_headers = {}
         for k, v in headers.items():
@@ -262,10 +257,7 @@ class Client(object):
 
     def _connect(self):
         # Host and port for the HTTP(S) connection to the API server.
-        if self.ca_certs == "HTTP":
-            api_port = 80
-        else:
-            api_port = 443
+        api_port = 80 if self.ca_certs == "HTTP" else 443
         if self.port is not None:
             api_port = self.port
 
@@ -277,7 +269,7 @@ class Client(object):
             host = self.proxy_host
             port = self.proxy_port
         else:
-            raise NotImplementedError("proxy_type=%s" % (self.proxy_type,))
+            raise NotImplementedError(f"proxy_type={self.proxy_type}")
 
         # Create outer HTTP(S) connection.
         if self.ca_certs == "HTTP":
@@ -310,10 +302,7 @@ class Client(object):
         conn = self._connect()
         if self.proxy_type == "CONNECT":
             # Ensure the request uses the correct protocol and Host.
-            if self.ca_certs == "HTTP":
-                api_proto = "http"
-            else:
-                api_proto = "https"
+            api_proto = "http" if self.ca_certs == "HTTP" else "https"
             uri = "".join((api_proto, "://", self.host, uri))
         conn.request(method, uri, body, headers)
         response = conn.getresponse()
@@ -353,37 +342,21 @@ class Client(object):
                 if data["stat"] == "FAIL":
                     if "message_detail" in data:
                         raise_error(
-                            "Received %s %s (%s)"
-                            % (
-                                response.status,
-                                data["message"],
-                                data["message_detail"],
-                            )
+                            f'Received {response.status} {data["message"]} ({data["message_detail"]})'
                         )
+
                     else:
-                        raise_error(
-                            "Received %s %s"
-                            % (
-                                response.status,
-                                data["message"],
-                            )
-                        )
+                        raise_error(f'Received {response.status} {data["message"]}')
             except (ValueError, KeyError, TypeError):
                 pass
-            raise_error(
-                "Received %s %s"
-                % (
-                    response.status,
-                    response.reason,
-                )
-            )
+            raise_error(f"Received {response.status} {response.reason}")
         try:
             data = json.loads(data)
             if data["stat"] != "OK":
-                raise_error("Received error response: %s" % data)
+                raise_error(f"Received error response: {data}")
             return data["response"]
         except (ValueError, KeyError, TypeError):
-            raise_error("Received bad response: %s" % data)
+            raise_error(f"Received bad response: {data}")
 
     @classmethod
     def canon_json(cls, params):
@@ -402,7 +375,7 @@ def output_response(response, data, headers=None):
     for header in headers:
         val = response.getheader(header)
         if val is not None:
-            print("%s: %s" % (header, val))
+            print(f"{header}: {val}")
     try:
         if not isinstance(data, six.text_type):
             data = data.decode("utf-8")
@@ -452,7 +425,7 @@ def main():
         try:
             (k, v) = p.split("=", 1)
         except ValueError:
-            sys.exit("Error: Positional argument %s is not " "in key=value format." % (p,))
+            sys.exit(f"Error: Positional argument {p} is not in key=value format.")
         params[k].append(v)
 
     # parse which arguments are filenames

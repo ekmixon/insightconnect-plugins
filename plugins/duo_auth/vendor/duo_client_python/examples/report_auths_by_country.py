@@ -28,7 +28,7 @@ admin_api = duo_client.Admin(
 logs = admin_api.get_authentication_log()
 
 # Count authentications by country:
-counts = dict()
+counts = {}
 for log in logs:
     country = log["location"]["country"]
     if country != "":

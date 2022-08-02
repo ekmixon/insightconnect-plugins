@@ -25,6 +25,6 @@ class Dirname(komand.Action):
     def test(self, params={}):
         path = "/usr/local/bin/stuff"
         dirname = os.path.dirname(path)
-        if not dirname == "/usr/local/bin":
+        if dirname != "/usr/local/bin":
             raise Exception("Dirname Failed")
         return {Output.DIRNAME: dirname}

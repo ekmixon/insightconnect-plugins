@@ -19,7 +19,11 @@ class ImportObservable(komand.Action):
 
     def run(self, params={}):
         self.request = copy(self.connection.request)
-        self.request.url, self.request.method = self.request.url + "/intelligence/import/", "POST"
+        self.request.url, self.request.method = (
+            f"{self.request.url}/intelligence/import/",
+            "POST",
+        )
+
 
         file_ = params.get("file", None)
         try:
@@ -36,7 +40,7 @@ class ImportObservable(komand.Action):
         if observable_settings.get("expiration_ts").startswith("0001-01-01"):
             del observable_settings["expiration_ts"]
         for key, value in observable_settings.items():
-            if key == "notes" or key == "trustedcircles":
+            if key in ["notes", "trustedcircles"]:
                 value = ",".join(str(val) for val in value)
 
             data[key] = value

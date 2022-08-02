@@ -19,13 +19,22 @@ class User(komand.Action):
             if user.status_code == 200:
                 user_info = helpers.clean_json(
                     {
-                        "username": user_obj["username"] if "username" in user_obj else params.get(Input.USERNAME),
-                        "url": "https://bitbucket.org/" + params.get(Input.USERNAME),
-                        "display name": user_obj["display_name"] if "display_name" in user_obj else "",
-                        "website": user_obj["website"] if "website" in user_obj else "",
-                        "location": user_obj["location"] if "location" in user_obj else "",
+                        "username": user_obj["username"]
+                        if "username" in user_obj
+                        else params.get(Input.USERNAME),
+                        "url": f"https://bitbucket.org/{params.get(Input.USERNAME)}",
+                        "display name": user_obj["display_name"]
+                        if "display_name" in user_obj
+                        else "",
+                        "website": user_obj["website"]
+                        if "website" in user_obj
+                        else "",
+                        "location": user_obj["location"]
+                        if "location" in user_obj
+                        else "",
                     }
                 )
+
                 return {Output.USER: user_info}
 
             return {"error": user_obj["error"]["message"]}

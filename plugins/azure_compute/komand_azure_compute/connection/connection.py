@@ -32,7 +32,7 @@ class Connection(komand.Connection):
         client_secret = params.get("client_secret").get("privateKey")
         tenant_id = params.get("tenant_id", "")
 
-        endpoint = "https://login.microsoftonline.com/%s/oauth2/token/" % tenant_id
+        endpoint = f"https://login.microsoftonline.com/{tenant_id}/oauth2/token/"
 
         access_token = self.get_token_from_client_credentials(
             endpoint=endpoint, client_id=client_id, client_secret=client_secret
@@ -52,7 +52,7 @@ class Connection(komand.Connection):
         version = "2017-03-01"
 
         # URL test authentication
-        url = server + "/subscriptions?api-version=%s" % version
+        url = server + f"/subscriptions?api-version={version}"
 
         # Call request test authentication
         response = requests.request(
@@ -60,9 +60,10 @@ class Connection(komand.Connection):
             url,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": "Bearer %s" % token,
+                "Authorization": f"Bearer {token}",
             },
         )
+
 
         if response.status_code == 401:
             raise ConnectionTestException(preset=ConnectionTestException.Preset.UNAUTHORIZED)

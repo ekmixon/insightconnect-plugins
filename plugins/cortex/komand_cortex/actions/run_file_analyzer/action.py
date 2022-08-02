@@ -28,19 +28,13 @@ class RunFileAnalyzer(komand.Action):
         _file = io.BytesIO(base64.b64decode(params.get("file")))
         # tlp_num = tlp[params.get('attributes').get('tlp')]
 
-        if params.get("attributes").get("filename"):
-            filename = params.get("attributes").get("filename")
-        else:
-            filename = "Not Available"
-
+        filename = params.get("attributes").get("filename") or "Not Available"
         try:
             _type = magic.Magic(mime=True).from_buffer(_file.read(1024))
             self.logger.info("MIME Content Type: %s", _type)
         except:
             self.logger.info("Unable to determine MIME Content Type of file, using %s:", _type)
             _type = "application/octet-stream"
-            pass
-
         # Reset file counter to beginning of file since read 1024 bytes for magic number above
         _file.seek(0)
 
@@ -54,7 +48,7 @@ class RunFileAnalyzer(komand.Action):
                 self.logger.info("TLP: %s is %s", tlp_num, k)
                 break
 
-        url = self.connection.url + "/api/analyzer/{}/run".format(_id)
+        url = self.connection.url + f"/api/analyzer/{_id}/run"
 
         file_def = {"data": (filename, _file.read(), _type)}
 

@@ -67,8 +67,7 @@ class PollFile(komand.Trigger):
 
                     """Check URL status code and return file contents"""
                     if url_object.code >= 200 or url_object.code <= 299:
-                        f = komand.helper.encode_string(contents)
-                        if f:
+                        if f := komand.helper.encode_string(contents):
                             output = {
                                 Output.BYTES: f.decode("utf-8"),
                                 Output.STATUS_CODE: url_object.code or 200,

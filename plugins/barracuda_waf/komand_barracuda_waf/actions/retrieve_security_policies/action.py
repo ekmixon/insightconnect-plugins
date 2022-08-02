@@ -14,7 +14,7 @@ class RetrieveSecurityPolicies(komand.Action):
     def run(self, params={}):
         action = "security_policies"
         if params.get("id"):
-            action = action + "/" + params.get("id")
+            action = f"{action}/" + params.get("id")
 
         r = self.connection.connector.get(action)
 
@@ -35,10 +35,9 @@ class RetrieveSecurityPolicies(komand.Action):
                 data[k]["id"] = data[k]["name"]
             if "default_character_set" not in data[k]:
                 data[k]["default_character_set"] = ""
-            if "limit_checks" not in data[k] or data[k]["limit_checks"] == "no":
-                data[k]["limit_checks"] = False
-            else:
-                data[k]["limit_checks"] = True
+            data[k]["limit_checks"] = (
+                "limit_checks" in data[k] and data[k]["limit_checks"] != "no"
+            )
 
             del data[k]["json key profile"]
 

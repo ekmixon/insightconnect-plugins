@@ -18,9 +18,7 @@ class RescheduleTask(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         task_id = params.get("task_id", "")
-        priority = params.get("priority", "")
-
-        if priority:
+        if priority := params.get("priority", ""):
             endpoint = server + "/tasks/reschedule/%d/%d" % (task_id, priority)
         else:
             endpoint = server + "/tasks/reschedule/%d" % (task_id)
@@ -28,11 +26,10 @@ class RescheduleTask(komand.Action):
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

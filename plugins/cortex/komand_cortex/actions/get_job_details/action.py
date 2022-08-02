@@ -19,7 +19,7 @@ class GetJobDetails(komand.Action):
         client = self.connection.client
 
         _id = params.get("job_id")
-        url = "{}/{}/{}".format(self.connection.url, "api/job", _id)
+        url = f"{self.connection.url}/api/job/{_id}"
         self.logger.info("URL: %s", url)
 
         try:

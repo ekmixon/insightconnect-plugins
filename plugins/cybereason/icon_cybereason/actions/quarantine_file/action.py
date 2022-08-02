@@ -35,26 +35,20 @@ class QuarantineFile(insightconnect_plugin_runtime.Action):
             quarantine,
         )
 
-        if quarantine:
-            action_type = "QUARANTINE_FILE"
+        action_type = "QUARANTINE_FILE" if quarantine else "UNQUARANTINE_FILE"
+        if actions := [
+            {"targetId": guid, "actionType": action_type} for guid in file_guids
+        ]:
+            return {
+                Output.REMEDIATE_ITEMS_RESPONSE: self.connection.api.remediate(
+                    self.connection.api.username, {sensor_guid: actions}, malop_id=malop_id
+                )
+            }
         else:
-            action_type = "UNQUARANTINE_FILE"
-
-        actions = []
-        for guid in file_guids:
-            actions.append({"targetId": guid, "actionType": action_type})
-
-        if not actions:
             raise PluginException(
                 cause="No actions to perform.",
                 assistance="This can happen because there are no quarantined files in the provided Malop.",
             )
-
-        return {
-            Output.REMEDIATE_ITEMS_RESPONSE: self.connection.api.remediate(
-                self.connection.api.username, {sensor_guid: actions}, malop_id=malop_id
-            )
-        }
 
     def get_file_guids(self, files: list, machine_name: str, machine_guid: str, quarantine: bool) -> list:
         filters = [
@@ -72,7 +66,7 @@ class QuarantineFile(insightconnect_plugin_runtime.Action):
             )
 
         if quarantine:
-            return [k for k in results.keys()]
+            return list(results.keys())
 
         quarantined_file_guids = []
         for k in results.keys():
@@ -80,9 +74,7 @@ class QuarantineFile(insightconnect_plugin_runtime.Action):
                 quarantined_files = results[k]["elementValues"]["quarantineFile"]["elementValues"]
             except KeyError:
                 continue
-            for f in quarantined_files:
-                quarantined_file_guids.append(f.get("guid"))
-
+            quarantined_file_guids.extend(f.get("guid") for f in quarantined_files)
         return quarantined_file_guids
 
     @staticmethod
@@ -95,9 +87,9 @@ class QuarantineFile(insightconnect_plugin_runtime.Action):
                 assistance="Please provide a Malop GUID of a Malop that has files involved.",
             )
 
-        file_names = [e.get("name") for e in element_values if e.get("elementType") == "File"]
-
-        if file_names:
+        if file_names := [
+            e.get("name") for e in element_values if e.get("elementType") == "File"
+        ]:
             return file_names
 
         raise PluginException(
@@ -115,7 +107,4 @@ class QuarantineFile(insightconnect_plugin_runtime.Action):
                 assistance="Please provide a Malop GUID of a Malop that has machines involved.",
             )
 
-        if [m for m in element_values if m.get("guid") == machine_guid]:
-            return True
-
-        return False
+        return bool([m for m in element_values if m.get("guid") == machine_guid])

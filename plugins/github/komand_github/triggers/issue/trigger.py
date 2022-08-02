@@ -32,11 +32,14 @@ class Issue(komand.Trigger):
         now_year = now_split[0]
 
         if now_year == issue_year:
-            for i in range(0, len(issue_day)):
-                if now_day[i] == issue_day[i] and i == 0:
-                    if (int(issue_day[i]) + 1) > int(now_day[i]) and issue_dict not in self.omit_list:
-                        return True
-                return False
+            for i in range(len(issue_day)):
+                return (
+                    now_day[i] == issue_day[i]
+                    and i == 0
+                    and (int(issue_day[i]) + 1) > int(now_day[i])
+                    and issue_dict not in self.omit_list
+                )
+
         return False
 
     def clean_issues(self, issues, now_time):
@@ -94,7 +97,7 @@ class Issue(komand.Trigger):
         org = params.get("organization")
         repo = params.get("repository")
         if assign and org and repo:
-            api_call = self.connection.api_prefix + "/repos/" + org + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{org}/{repo}/issues"
             data["assignee"] = assign
             self.logger.info(
                 "Monitoring issues for assignee %s on repository %s in organization %s",
@@ -103,14 +106,16 @@ class Issue(komand.Trigger):
                 org,
             )
         elif org and repo:
-            api_call = self.connection.api_prefix + "/repos/" + org + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{org}/{repo}/issues"
             self.logger.info("Monitoring issues for repository %s in organization %s", repo, org)
         elif assign and repo:
-            api_call = self.connection.api_prefix + "/repos/" + self.connection.username + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{self.connection.username}/{repo}/issues"
+
             data["assignee"] = assign
             self.logger.info("Monitoring issues for assignee %s on repository %s", assign, repo)
         else:
-            api_call = self.connection.api_prefix + "/repos/" + self.connection.username + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{self.connection.username}/{repo}/issues"
+
             self.logger.info("Monitoring issues for repository %s", repo)
 
         while True:

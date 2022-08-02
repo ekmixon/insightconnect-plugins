@@ -13,8 +13,7 @@ class Accounts(client.Client):
         Return a list of all child accounts of the integration's account.
         """
         params = {}
-        response = self.json_api_call("POST", "/accounts/v1/account/list", params)
-        return response
+        return self.json_api_call("POST", "/accounts/v1/account/list", params)
 
     def create_account(self, name):
         """
@@ -23,8 +22,7 @@ class Accounts(client.Client):
         params = {
             "name": name,
         }
-        response = self.json_api_call("POST", "/accounts/v1/account/create", params)
-        return response
+        return self.json_api_call("POST", "/accounts/v1/account/create", params)
 
     def delete_account(self, account_id):
         """
@@ -33,5 +31,4 @@ class Accounts(client.Client):
         params = {
             "account_id": account_id,
         }
-        response = self.json_api_call("POST", "/accounts/v1/account/delete", params)
-        return response
+        return self.json_api_call("POST", "/accounts/v1/account/delete", params)

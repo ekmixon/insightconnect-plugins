@@ -34,10 +34,7 @@ class AddEvent(komand.Action):
             self.logger.error("AddEvent: run: Problem with request")
             raise Exception("AddEvent: run: Problem with request")
 
-        ids = []
-        for key, value in dictIds.items():
-            ids.append(value)
-
+        ids = [value for key, value in dictIds.items()]
         return {"ID": ids}
 
     def test(self):

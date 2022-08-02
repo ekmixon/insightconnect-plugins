@@ -19,7 +19,7 @@ class FilenameLookup(komand.Action):
         ret = {}
         server = self.connection.server
         token = self.connection.token
-        url = server + "/v1/private/insights/%s" % params.get("filename")
+        url = server + f'/v1/private/insights/{params.get("filename")}'
         headers = {"X-Api-Key": token}
         response = requests.get(url, headers=headers)
 

@@ -22,10 +22,7 @@ class FindEvent(komand.Action):
         host = self.connection.host
         token = self.connection.token
         connector = self.connection.connector
-        payload = dict()
-        for param in params:
-            if params[param]:
-                payload[param] = params[param]
+        payload = {param: params[param] for param in params if params[param]}
         self.logger.info(payload)
         headers = {"X-Auth-Token": f"{token}/{connector}"}
         url = host + FindEvent._URI
@@ -39,9 +36,9 @@ class FindEvent(komand.Action):
         except ValueError:
             self.logger.error(result.text)
             raise Exception(
-                f"Error: Received an unexpected response"
-                f" (non-JSON or no response was received). Raw response in logs."
+                'Error: Received an unexpected response (non-JSON or no response was received). Raw response in logs.'
             )
+
         if result.status_code == 200:
             return {
                 Output.SUCCESS: data["success"],

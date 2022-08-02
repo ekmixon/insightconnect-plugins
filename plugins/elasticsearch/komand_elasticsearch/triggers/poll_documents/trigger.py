@@ -47,9 +47,8 @@ class PollDocuments(insightconnect_plugin_runtime.Trigger):
                 if hit.get("_version"):
                     if hit["_id"] not in old_d:
                         old_d[hit["_id"]] = [hit["_version"]]
-                    else:
-                        if hit["_version"] not in old_d[hit["_id"]]:
-                            old_d[hit["_id"]].append(hit["_version"])
+                    elif hit["_version"] not in old_d[hit["_id"]]:
+                        old_d[hit["_id"]].append(hit["_version"])
 
             if not hits:
                 time.sleep(frequency)

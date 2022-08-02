@@ -36,8 +36,4 @@ class UpdateWatchedDomains(insightconnect_plugin_runtime.Action):
 
     @staticmethod
     def _get_default(params, key, default: str = None):
-        entry = params.get(key, default)
-        if not entry:
-            entry = default
-
-        return entry
+        return params.get(key, default) or default

@@ -19,7 +19,11 @@ class GetApprovalRequest(komand.Action):
         self.logger.info("Getting approval request...")
         self.logger.info(f"Approval Request ID: {approval_request_id}")
 
-        url = self.connection.host + "/api/bit9platform/v1/approvalRequest/%s" % approval_request_id
+        url = (
+            self.connection.host
+            + f"/api/bit9platform/v1/approvalRequest/{approval_request_id}"
+        )
+
         r = self.connection.session.get(url, verify=self.connection.verify)
 
         try:

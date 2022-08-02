@@ -13,11 +13,10 @@ class Connection(komand.Connection):
         service_address = params.get("service_address")
         api_key = params.get("api_key").get("secretKey")
         auth_headers = {"Authorization": api_key, "te_cookie": "remember"}
-        using_cloud_server = params.get("using_cloud_server")
-        if using_cloud_server:
-            self.url = "https://{}/tecloud/api/v1/file/".format(service_address)
+        if using_cloud_server := params.get("using_cloud_server"):
+            self.url = f"https://{service_address}/tecloud/api/v1/file/"
         else:
-            self.url = "https://{}:18194/tecloud/api/v1/file/".format(service_address)
+            self.url = f"https://{service_address}:18194/tecloud/api/v1/file/"
         self.session = requests.session()
         self.session.headers.update(auth_headers)
         self.logger.info("Connect: Connecting...")

@@ -35,10 +35,10 @@ class GetJobs(komand.Action):
             query_params.append(Eq("analyzerId", analyzer_filter))
 
         query = And(*query_params)
-        self.logger.info("Query: {}".format(query))
+        self.logger.info(f"Query: {query}")
 
-        range_ = "{}-{}".format(start, start + limit)
-        self.logger.info("Range: {}".format(range_))
+        range_ = f"{start}-{start + limit}"
+        self.logger.info(f"Range: {range_}")
 
         try:
             jobs = api.jobs.find_all(query, range=range_, sort="-createdAt")
@@ -50,6 +50,9 @@ class GetJobs(komand.Action):
             self.logger.error(e)
             raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
         except Exception as e:
-            raise ConnectionTestException(cause="Failed to obtain the list of jobs.", assistance="{}.".format(e))
+            raise ConnectionTestException(
+                cause="Failed to obtain the list of jobs.", assistance=f"{e}."
+            )
+
 
         return {"list": jobs}

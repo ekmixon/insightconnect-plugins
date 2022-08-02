@@ -24,13 +24,10 @@ class ClamAv(komand.Action):
         region = params.get("region")
         empty_json_output = {}
 
-        # Create private key file
-        f = open("./pk.pem", "w")
-        f.write(private_key)
-        f.close()
-
+        with open("./pk.pem", "w") as f:
+            f.write(private_key)
         # Create command from user input
-        command = "python clam_av_run.py " + directory
+        command = f"python clam_av_run.py {directory}"
 
         try:
             # Connect to AWS instance

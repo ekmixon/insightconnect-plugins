@@ -15,10 +15,7 @@ class RequestAPI:
 
     def get_main_version(self) -> str:
         number: str = self._call_api("GET", "").get("version", {}).get("number", "")
-        if number:
-            return number[0]
-
-        return "7"
+        return number[0] if number else "7"
 
     def cluster_health(self) -> dict:
         return self._call_api("GET", "_cluster/health")
@@ -33,10 +30,7 @@ class RequestAPI:
         return self._call_api("POST", f"{index}/{_type}", params, json_data=document)
 
     def _search_first_page(self, path: str, routing: str, scroll_time: str, json_data: dict = {}):
-        query = None
-        if json_data:
-            query = {"query": json_data, "version": "true"}
-
+        query = {"query": json_data, "version": "true"} if json_data else None
         return self._call_api(
             method="GET", path=path, params={"routing": routing, "size": 5, "scroll": scroll_time}, json_data=query
         )
@@ -58,7 +52,7 @@ class RequestAPI:
         elif total is None:
             total = 0
 
-        for i in range(0, 9999):
+        for _ in range(9999):
             if scroll_id:
                 try:
                     scroll_page = self._get_scroll_page(scroll_id, scroll_time)

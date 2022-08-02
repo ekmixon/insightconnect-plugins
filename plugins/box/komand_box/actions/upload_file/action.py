@@ -22,9 +22,7 @@ class UploadFile(komand.Action):
         stream.seek(0)
         client = self.connection.box_connection
         file_upload = client.folder(folder_id=folder_id).upload_stream(stream, file_name)
-        if file_upload.get()["id"]:
-            return {"status": True}
-        return {"status": False}
+        return {"status": True} if file_upload.get()["id"] else {"status": False}
 
     def test(self):
         try:

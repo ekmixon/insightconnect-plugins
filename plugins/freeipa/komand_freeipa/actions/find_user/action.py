@@ -16,7 +16,6 @@ class FindUser(komand.Action):
 
     def run(self, params={}):
         search_parameters = params.get(Input.SEARCH_PARAMETERS)
-        results = []
         if search_parameters == "":
             reply = self.connection.ipa.user_find()
         else:
@@ -28,6 +27,5 @@ class FindUser(komand.Action):
             raise PluginException(cause="Empty response", assistance="No results found")
 
         parsed_json = reply["result"]["result"]
-        for user in parsed_json:
-            results.append(user["uid"][0])
+        results = [user["uid"][0] for user in parsed_json]
         return {Output.USERS: results, "full_output": parsed_json}

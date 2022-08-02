@@ -34,10 +34,10 @@ class AddAddressToGroup(komand.Action):
 
     @staticmethod
     def _generate_payload(address_object: dict, address_group: dict) -> dict:
-        new_address_object = {}
         required_field = ["type", "id", "name"]
-        for field in required_field:
-            new_address_object[field] = address_object.get(field)
+        new_address_object = {
+            field: address_object.get(field) for field in required_field
+        }
 
         address_group["objects"].append(new_address_object)
         address_group.pop("links", None)

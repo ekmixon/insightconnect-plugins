@@ -41,8 +41,4 @@ def check_if_ip_in_whitelist(ip_address: str, whitelist: [str]) -> bool:
 
     networks = {ipaddress.ip_network(item) for item in whitelist if "/" in item}
 
-    for network in networks:
-        if ip_obj in network:
-            return True
-
-    return False
+    return any(ip_obj in network for network in networks)

@@ -7,7 +7,7 @@ def get_group(connection, group_name):
     headers = connection.get_headers(connection.get_auth_token())
     params = {"$filter": f"displayName eq '{group_name}'"}
     result = requests.get(endpoint, headers=headers, params=params)
-    if not result.status_code == 200:
+    if result.status_code != 200:
         raise PluginException(
             cause="Get User Info failed.",
             assistance="Unexpected return code from server.",

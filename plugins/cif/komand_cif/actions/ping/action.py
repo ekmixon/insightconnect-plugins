@@ -14,60 +14,62 @@ class Ping(komand.Action):
 
     def run(self, params={}):
         # TODO: Implement run function
-        url = "{}/{}".format(self.connection.url, "ping")
+        url = f"{self.connection.url}/ping"
         headers = {
-            "Authorization": "Token token={}".format(self.connection.api_token),
+            "Authorization": f"Token token={self.connection.api_token}",
             "Accept": "application/vnd.cif.v2+json",
             "Content-Type": "application/json",
         }
+
 
         try:
             r = requests.get(url, headers=headers, verify=self.connection.verify)
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            self.logger.error("HTTP error occurred. Error: " + str(e))
+            self.logger.error(f"HTTP error occurred. Error: {str(e)}")
             raise
         except requests.exceptions.ConnectionError as e:
-            self.logger.error("A network problem occurred. Error: " + str(e))
+            self.logger.error(f"A network problem occurred. Error: {str(e)}")
             raise
         except requests.exceptions.Timeout as e:
-            self.logger.error("Timeout occurred. Error: " + str(e))
+            self.logger.error(f"Timeout occurred. Error: {str(e)}")
             raise
         except requests.exceptions.TooManyRedirects as e:
-            self.logger.error("Too many redirects! Error: " + str(e))
+            self.logger.error(f"Too many redirects! Error: {str(e)}")
             raise
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
             raise
 
         return r.json()
 
     def test(self):
         # TODO: Implement test function
-        url = "{}/{}".format(self.connection.url, "ping")
+        url = f"{self.connection.url}/ping"
         headers = {
-            "Authorization": "Token token={}".format(self.connection.api_token),
+            "Authorization": f"Token token={self.connection.api_token}",
             "Accept": "application/vnd.cif.v2+json",
             "Content-Type": "application/json",
         }
+
 
         try:
             r = requests.get(url, headers=headers, verify=self.connection.verify)
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            self.logger.error("HTTP error occurred. Error: " + str(e))
+            self.logger.error(f"HTTP error occurred. Error: {str(e)}")
             raise
         except requests.exceptions.ConnectionError as e:
-            self.logger.error("A network problem occurred. Error: " + str(e))
+            self.logger.error(f"A network problem occurred. Error: {str(e)}")
             raise
         except requests.exceptions.Timeout as e:
-            self.logger.error("Timeout occurred. Error: " + str(e))
+            self.logger.error(f"Timeout occurred. Error: {str(e)}")
             raise
         except requests.exceptions.TooManyRedirects as e:
-            self.logger.error("Too many redirects! Error: " + str(e))
+            self.logger.error(f"Too many redirects! Error: {str(e)}")
             raise
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
             raise
 
         return r.json()

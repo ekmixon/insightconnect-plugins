@@ -31,7 +31,7 @@ class ForSale(komand.Action):
         section_filter = params.get("section_filter")
         # The two filters base and section need to be combined into actual filter
         the_filter = base_filter.copy()
-        the_filter.update(section_filter)
+        the_filter |= section_filter
         self.logger.info("Filter: %s", the_filter)
 
         # Translate category name to its short hand form
@@ -49,7 +49,7 @@ class ForSale(komand.Action):
         for posting in resp.get_results():
             # None types will fail on return because they don't match the spec
             for key in posting:
-                if posting[key] == None:
+                if posting[key] is None:
                     posting[key] = "N/A"
             postings.append(posting)
 

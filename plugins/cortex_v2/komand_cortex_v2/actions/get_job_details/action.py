@@ -20,7 +20,7 @@ class GetJobDetails(komand.Action):
         api = self.connection.api
 
         job_id = params.get("job_id")
-        self.logger.info("Getting details for job {}".format(job_id))
+        self.logger.info(f"Getting details for job {job_id}")
 
         try:
             job = api.jobs.get_by_id(job_id)
@@ -32,6 +32,9 @@ class GetJobDetails(komand.Action):
             self.logger.error(e)
             raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
         except Exception as e:
-            raise ConnectionTestException(cause="Unable to retrieve job details.", assistance="{}.".format(e))
+            raise ConnectionTestException(
+                cause="Unable to retrieve job details.", assistance=f"{e}."
+            )
+
 
         return {"job": job}

@@ -17,8 +17,7 @@ class ReverseNameServer(komand.Action):
     def run(self, params={}):
         params = komand.helper.clean_dict(params)
         params["query"] = params.pop("domain")
-        response = utils.make_request(self.connection.api.reverse_name_server, **params)
-        return response
+        return utils.make_request(self.connection.api.reverse_name_server, **params)
 
     def test(self):
         """TODO: Test action"""

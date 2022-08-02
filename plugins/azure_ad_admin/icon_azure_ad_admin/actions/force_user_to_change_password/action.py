@@ -31,7 +31,7 @@ class ForceUserToChangePassword(komand.Action):
         data = {"passwordProfile": {"forceChangePasswordNextSignIn": True}}
         result = requests.patch(endpoint, headers=headers, json=data)
 
-        if not result.status_code == 204:
+        if result.status_code != 204:
             raise PluginException(
                 cause="Force User to Change Password failed.",
                 assistance="Unexpected return code from server.",

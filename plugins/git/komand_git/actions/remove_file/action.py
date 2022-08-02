@@ -19,18 +19,21 @@ class RemoveFile(komand.Action):
         git_repository = self.connection.git_repository
         result = {}
 
-        self.logger.info("Run: Removing {} from repository".format(file_path))
+        self.logger.info(f"Run: Removing {file_path} from repository")
         try:
             git_repository.remove(file_path)
-            commit_hash = git_repository.commit("Remove {}".format(file_path))
+            commit_hash = git_repository.commit(f"Remove {file_path}")
             result["commit_id"] = commit_hash
             git_repository.push()
 
-            self.logger.info("Run: File {} removed successfully".format(file_path))
+            self.logger.info(f"Run: File {file_path} removed successfully")
             result["commit_url"] = git_repository.get_commit_url(commit_hash)
             result["success"] = True
         except Exception as e:
-            self.logger.error("RemoveFile: Exception: Failed to remove {}:\n{}".format(file_path, str(e)))
+            self.logger.error(
+                f"RemoveFile: Exception: Failed to remove {file_path}:\n{str(e)}"
+            )
+
             result["success"] = True
 
         return komand.helper.clean_dict(result)

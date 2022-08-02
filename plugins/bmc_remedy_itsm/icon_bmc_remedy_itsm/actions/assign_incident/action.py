@@ -47,7 +47,7 @@ class AssignIncident(komand.Action):
         original_incident_response = requests.get(url, headers=headers)
 
         # If we made it this far, and this call fails, something really unexpected happened.
-        if not original_incident_response.status_code == 200:
+        if original_incident_response.status_code != 200:
             raise PluginException(preset=PluginException.Preset.SERVER_ERROR, data=original_incident_response.text)
 
         try:

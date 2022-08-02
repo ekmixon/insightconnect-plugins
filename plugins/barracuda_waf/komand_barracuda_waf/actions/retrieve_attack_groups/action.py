@@ -17,11 +17,11 @@ class RetrieveAttackGroups(komand.Action):
         if not policy_id:
             self.connection.connector.raise_error("Empty argument policy_id")
 
-        action = action + "/" + policy_id + "/attack_groups"
+        action = f"{action}/{policy_id}/attack_groups"
 
         attack_group_id = params.get("attack_group_id")
         if attack_group_id:
-            action = action + "/" + attack_group_id
+            action = f"{action}/{attack_group_id}"
 
         r = self.connection.connector.get(action)
         self.connection.connector.raise_error_when_not_in_status(200)

@@ -108,7 +108,6 @@ class TestNewIncidentFound(TestCase):
         new_incidents_json = json.loads(read_file_to_string("./payloads/get_new_incidents.json"))
 
         nif._check_new_incidents_and_send("", maya.now(), new_incidents_json)
-        pass  # We are just making sure the last call didn't throw an exception.
 
     @mock.patch("icon_bmc_remedy_itsm.triggers.NewIncidentFound.send", side_effect=mock_send)
     def test_check_new_incidents_and_send_valid_return(self, mockSend):

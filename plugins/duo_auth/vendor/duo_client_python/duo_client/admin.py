@@ -195,12 +195,11 @@ class Admin(client.Client):
         return super(Admin, self).api_call(method, path, params)
 
     @classmethod
-    def _canonicalize_ip_whitelist(klass, ip_whitelist):
+    def _canonicalize_ip_whitelist(cls, ip_whitelist):
         if isinstance(ip_whitelist, six.string_types):
             return ip_whitelist
         else:
             return ",".join(ip_whitelist)
-        pass
 
     @staticmethod
     def _canonicalize_bypass_codes(codes):
@@ -358,7 +357,7 @@ class Admin(client.Client):
         params = {}
 
         if api_version == 1:  # v1
-            params["mintime"] = kwargs["mintime"] if "mintime" in kwargs else 0
+            params["mintime"] = kwargs.get("mintime", 0)
             # Sanity check mintime as unix timestamp, then transform to string
             params["mintime"] = "{:d}".format(int(params["mintime"]))
             warnings.warn(
@@ -383,10 +382,9 @@ class Admin(client.Client):
             params["maxtime"] = "{:d}".format(int(params["maxtime"]))
 
         response = self.json_api_call(
-            "GET",
-            "/admin/v{}/logs/authentication".format(api_version),
-            params,
+            "GET", f"/admin/v{api_version}/logs/authentication", params
         )
+
 
         if api_version == 1:
             for row in response:
@@ -442,8 +440,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/users", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/users", {})
 
     def get_user_by_id(self, user_id):
         """
@@ -456,9 +453,8 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id
-        response = self.json_api_call("GET", path, {})
-        return response
+        path = f"/admin/v1/users/{user_id}"
+        return self.json_api_call("GET", path, {})
 
     def get_users_by_name(self, username):
         """
@@ -473,8 +469,7 @@ class Admin(client.Client):
         params = {
             "username": username,
         }
-        response = self.json_api_call("GET", "/admin/v1/users", params)
-        return response
+        return self.json_api_call("GET", "/admin/v1/users", params)
 
     def add_user(
         self,
@@ -529,8 +524,7 @@ class Admin(client.Client):
             params["alias3"] = alias3
         if alias4 is not None:
             params["alias4"] = alias4
-        response = self.json_api_call("POST", "/admin/v1/users", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/users", params)
 
     def update_user(
         self,
@@ -564,7 +558,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id
+        path = f"/admin/v1/users/{user_id}"
         params = {}
         if username is not None:
             params["username"] = username
@@ -588,8 +582,7 @@ class Admin(client.Client):
             params["alias3"] = alias3
         if alias4 is not None:
             params["alias4"] = alias4
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def delete_user(self, user_id):
         """
@@ -600,7 +593,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id
+        path = f"/admin/v1/users/{user_id}"
         return self.json_api_call("DELETE", path, {})
 
     def enroll_user(self, username, email, valid_secs=None):
@@ -643,7 +636,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/bypass_codes"
+        path = f"/admin/v1/users/{user_id}/bypass_codes"
         params = {}
 
         if count is not None:
@@ -673,7 +666,7 @@ class Admin(client.Client):
             Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/bypass_codes"
+        path = f"/admin/v1/users/{user_id}/bypass_codes"
         return self.json_api_call("GET", path, {})
 
     def get_user_phones(self, user_id):
@@ -687,7 +680,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/phones"
+        path = f"/admin/v1/users/{user_id}/phones"
         return self.json_api_call("GET", path, {})
 
     def add_user_phone(self, user_id, phone_id):
@@ -702,7 +695,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/phones"
+        path = f"/admin/v1/users/{user_id}/phones"
         params = {
             "phone_id": phone_id,
         }
@@ -720,7 +713,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/phones/" + phone_id
+        path = f"/admin/v1/users/{user_id}/phones/{phone_id}"
         params = {}
         return self.json_api_call("DELETE", path, params)
 
@@ -735,7 +728,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/tokens"
+        path = f"/admin/v1/users/{user_id}/tokens"
         params = {}
         return self.json_api_call("GET", path, params)
 
@@ -751,7 +744,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/tokens"
+        path = f"/admin/v1/users/{user_id}/tokens"
         params = {
             "token_id": token_id,
         }
@@ -770,7 +763,7 @@ class Admin(client.Client):
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
         token_id = six.moves.urllib.parse.quote_plus(str(token_id))
-        path = "/admin/v1/users/" + user_id + "/tokens/" + token_id
+        path = f"/admin/v1/users/{user_id}/tokens/{token_id}"
         return self.json_api_call("DELETE", path, {})
 
     def get_user_u2ftokens(self, user_id):
@@ -787,7 +780,7 @@ class Admin(client.Client):
             Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/u2ftokens"
+        path = f"/admin/v1/users/{user_id}/u2ftokens"
         return self.json_api_call("GET", path, {})
 
     def get_user_groups(self, user_id):
@@ -801,7 +794,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/groups"
+        path = f"/admin/v1/users/{user_id}/groups"
         return self.json_api_call("GET", path, {})
 
     def add_user_group(self, user_id, group_id):
@@ -816,7 +809,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/groups"
+        path = f"/admin/v1/users/{user_id}/groups"
         params = {"group_id": group_id}
         return self.json_api_call("POST", path, params)
 
@@ -832,7 +825,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         user_id = six.moves.urllib.parse.quote_plus(str(user_id))
-        path = "/admin/v1/users/" + user_id + "/groups/" + group_id
+        path = f"/admin/v1/users/{user_id}/groups/{group_id}"
         params = {}
         return self.json_api_call("DELETE", path, params)
 
@@ -842,8 +835,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/endpoints", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/endpoints", {})
 
     def get_phones(self):
         """
@@ -854,8 +846,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/phones", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/phones", {})
 
     def get_phone_by_id(self, phone_id):
         """
@@ -867,9 +858,8 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/phones/" + phone_id
-        response = self.json_api_call("GET", path, {})
-        return response
+        path = f"/admin/v1/phones/{phone_id}"
+        return self.json_api_call("GET", path, {})
 
     def get_phones_by_number(self, number, extension=None):
         """
@@ -886,8 +876,7 @@ class Admin(client.Client):
         params = {"number": number}
         if extension is not None:
             params["extension"] = extension
-        response = self.json_api_call("GET", path, params)
-        return response
+        return self.json_api_call("GET", path, params)
 
     def add_phone(
         self,
@@ -932,8 +921,7 @@ class Admin(client.Client):
             params["predelay"] = predelay
         if postdelay is not None:
             params["postdelay"] = postdelay
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def update_phone(
         self,
@@ -964,7 +952,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         phone_id = six.moves.urllib.parse.quote_plus(str(phone_id))
-        path = "/admin/v1/phones/" + phone_id
+        path = f"/admin/v1/phones/{phone_id}"
         params = {}
         if number is not None:
             params["number"] = number
@@ -980,8 +968,7 @@ class Admin(client.Client):
             params["predelay"] = predelay
         if postdelay is not None:
             params["postdelay"] = postdelay
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def delete_phone(self, phone_id):
         """
@@ -991,7 +978,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/phones/" + phone_id
+        path = f"/admin/v1/phones/{phone_id}"
         params = {}
         return self.json_api_call("DELETE", path, params)
 
@@ -1024,7 +1011,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/phones/" + phone_id + "/send_sms_activation"
+        path = f"/admin/v1/phones/{phone_id}/send_sms_activation"
         params = {}
         if valid_secs is not None:
             params["valid_secs"] = str(valid_secs)
@@ -1054,7 +1041,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/phones/" + phone_id + "/activation_url"
+        path = f"/admin/v1/phones/{phone_id}/activation_url"
         params = {}
         if valid_secs is not None:
             params["valid_secs"] = str(valid_secs)
@@ -1078,7 +1065,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/phones/" + phone_id + "/send_sms_installation"
+        path = f"/admin/v1/phones/{phone_id}/send_sms_installation"
         params = {}
         if installation_msg is not None:
             params["installation_msg"] = installation_msg
@@ -1092,8 +1079,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/desktoptokens", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/desktoptokens", {})
 
     def get_desktoptoken_by_id(self, desktoptoken_id):
         """
@@ -1105,9 +1091,8 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/desktoptokens/" + desktoptoken_id
-        response = self.json_api_call("GET", path, {})
-        return response
+        path = f"/admin/v1/desktoptokens/{desktoptoken_id}"
+        return self.json_api_call("GET", path, {})
 
     def add_desktoptoken(self, platform, name=None):
         """
@@ -1125,8 +1110,7 @@ class Admin(client.Client):
         }
         if name is not None:
             params["name"] = name
-        response = self.json_api_call("POST", "/admin/v1/desktoptokens", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/desktoptokens", params)
 
     def delete_desktoptoken(self, desktoptoken_id):
         """
@@ -1139,7 +1123,8 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        path = "/admin/v1/desktoptokens/" + six.moves.urllib.parse.quote_plus(desktoptoken_id)
+        path = f"/admin/v1/desktoptokens/{six.moves.urllib.parse.quote_plus(desktoptoken_id)}"
+
         params = {}
         return self.json_api_call("DELETE", path, params)
 
@@ -1155,14 +1140,13 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         desktoptoken_id = six.moves.urllib.parse.quote_plus(str(desktoptoken_id))
-        path = "/admin/v1/desktoptokens/" + desktoptoken_id
+        path = f"/admin/v1/desktoptokens/{desktoptoken_id}"
         params = {}
         if platform is not None:
             params["platform"] = platform
         if name is not None:
             params["name"] = name
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def activate_desktoptoken(self, desktoptoken_id, valid_secs=None):
         """
@@ -1181,8 +1165,9 @@ class Admin(client.Client):
         if valid_secs:
             params["valid_secs"] = str(valid_secs)
         quoted_id = six.moves.urllib.parse.quote_plus(desktoptoken_id)
-        response = self.json_api_call("POST", "/admin/v1/desktoptokens/%s/activate" % quoted_id, params)
-        return response
+        return self.json_api_call(
+            "POST", f"/admin/v1/desktoptokens/{quoted_id}/activate", params
+        )
 
     def get_tokens(self):
         """
@@ -1192,8 +1177,7 @@ class Admin(client.Client):
         Returns list of token objects.
         """
         params = {}
-        response = self.json_api_call("GET", "/admin/v1/tokens", params)
-        return response
+        return self.json_api_call("GET", "/admin/v1/tokens", params)
 
     def get_token_by_id(self, token_id):
         """
@@ -1204,10 +1188,9 @@ class Admin(client.Client):
         Returns a token object.
         """
         token_id = six.moves.urllib.parse.quote_plus(str(token_id))
-        path = "/admin/v1/tokens/" + token_id
+        path = f"/admin/v1/tokens/{token_id}"
         params = {}
-        response = self.json_api_call("GET", path, params)
-        return response
+        return self.json_api_call("GET", path, params)
 
     def get_tokens_by_serial(self, type, serial):
         """
@@ -1222,8 +1205,7 @@ class Admin(client.Client):
             "type": type,
             "serial": serial,
         }
-        response = self.json_api_call("GET", "/admin/v1/tokens", params)
-        return response
+        return self.json_api_call("GET", "/admin/v1/tokens", params)
 
     def delete_token(self, token_id):
         """
@@ -1232,7 +1214,7 @@ class Admin(client.Client):
         token_id - Token ID
         """
         token_id = six.moves.urllib.parse.quote_plus(str(token_id))
-        path = "/admin/v1/tokens/" + token_id
+        path = f"/admin/v1/tokens/{token_id}"
         return self.json_api_call("DELETE", path, {})
 
     def add_hotp6_token(self, serial, secret, counter=None):
@@ -1249,8 +1231,7 @@ class Admin(client.Client):
         params = {"type": "h6", "serial": serial, "secret": secret}
         if counter is not None:
             params["counter"] = str(int(counter))
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def add_hotp8_token(self, serial, secret, counter=None):
         """
@@ -1266,8 +1247,7 @@ class Admin(client.Client):
         params = {"type": "h8", "serial": serial, "secret": secret}
         if counter is not None:
             params["counter"] = str(int(counter))
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def add_totp6_token(self, serial, secret, totp_step=None):
         """
@@ -1283,8 +1263,7 @@ class Admin(client.Client):
         params = {"type": "t6", "serial": serial, "secret": secret}
         if totp_step is not None:
             params["totp_step"] = str(int(totp_step))
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def add_totp8_token(self, serial, secret, totp_step=None):
         """
@@ -1300,8 +1279,7 @@ class Admin(client.Client):
         params = {"type": "t8", "serial": serial, "secret": secret}
         if totp_step is not None:
             params["totp_step"] = str(int(totp_step))
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def update_token(self, token_id, totp_step=None):
         """
@@ -1314,12 +1292,11 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         token_id = six.moves.urllib.parse.quote_plus(str(token_id))
-        path = "/admin/v1/tokens/" + token_id
+        path = f"/admin/v1/tokens/{token_id}"
         params = {}
         if totp_step is not None:
             params["totp_step"] = totp_step
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def add_yubikey_token(self, serial, private_id, aes_key):
         """
@@ -1332,8 +1309,7 @@ class Admin(client.Client):
         """
         path = "/admin/v1/tokens"
         params = {"type": "yk", "serial": serial, "private_id": private_id, "aes_key": aes_key}
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def resync_hotp_token(self, token_id, code1, code2, code3):
         """
@@ -1350,7 +1326,7 @@ class Admin(client.Client):
         Returns nothing on success.
         """
         token_id = six.moves.urllib.parse.quote_plus(str(token_id))
-        path = "/admin/v1/tokens/" + token_id + "/resync"
+        path = f"/admin/v1/tokens/{token_id}/resync"
         params = {"code1": code1, "code2": code2, "code3": code3}
         return self.json_api_call("POST", path, params)
 
@@ -1505,8 +1481,7 @@ class Admin(client.Client):
         if not params:
             raise TypeError("No settings were provided")
 
-        response = self.json_api_call("POST", "/admin/v1/settings", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/settings", params)
 
     def set_allowed_admin_auth_methods(
         self,
@@ -1530,13 +1505,15 @@ class Admin(client.Client):
             params["yubikey_enabled"] = "1" if yubikey_enabled else "0"
         if voice_enabled is not None:
             params["voice_enabled"] = "1" if voice_enabled else "0"
-        response = self.json_api_call("POST", "/admin/v1/admins/allowed_auth_methods", params)
-        return response
+        return self.json_api_call(
+            "POST", "/admin/v1/admins/allowed_auth_methods", params
+        )
 
     def get_allowed_admin_auth_methods(self):
         params = {}
-        response = self.json_api_call("GET", "/admin/v1/admins/allowed_auth_methods", params)
-        return response
+        return self.json_api_call(
+            "GET", "/admin/v1/admins/allowed_auth_methods", params
+        )
 
     def get_info_summary(self):
         """
@@ -1546,8 +1523,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         params = {}
-        response = self.json_api_call("GET", "/admin/v1/info/summary", params)
-        return response
+        return self.json_api_call("GET", "/admin/v1/info/summary", params)
 
     def get_info_telephony_credits_used(self, mintime=None, maxtime=None):
         """
@@ -1565,8 +1541,9 @@ class Admin(client.Client):
             params["mintime"] = mintime
         if maxtime is not None:
             params["maxtime"] = maxtime
-        response = self.json_api_call("GET", "/admin/v1/info/telephony_credits_used", params)
-        return response
+        return self.json_api_call(
+            "GET", "/admin/v1/info/telephony_credits_used", params
+        )
 
     def get_authentication_attempts(self, mintime=None, maxtime=None):
         """
@@ -1594,8 +1571,9 @@ class Admin(client.Client):
             params["mintime"] = mintime
         if maxtime is not None:
             params["maxtime"] = maxtime
-        response = self.json_api_call("GET", "/admin/v1/info/authentication_attempts", params)
-        return response
+        return self.json_api_call(
+            "GET", "/admin/v1/info/authentication_attempts", params
+        )
 
     def get_user_authentication_attempts(self, mintime=None, maxtime=None):
         """
@@ -1625,8 +1603,9 @@ class Admin(client.Client):
             params["mintime"] = mintime
         if maxtime is not None:
             params["maxtime"] = maxtime
-        response = self.json_api_call("GET", "/admin/v1/info/user_authentication_attempts", params)
-        return response
+        return self.json_api_call(
+            "GET", "/admin/v1/info/user_authentication_attempts", params
+        )
 
     def get_groups(self):
         """
@@ -1672,7 +1651,7 @@ class Admin(client.Client):
         """
         return self.json_api_call(
             "GET",
-            "/admin/v2/groups/" + group_id + "/users",
+            f"/admin/v2/groups/{group_id}/users",
             {
                 "limit": str(limit),
                 "offset": str(offset),
@@ -1718,8 +1697,7 @@ class Admin(client.Client):
             params["mobile_otp_enabled"] = "1" if mobile_otp_enabled else "0"
         if u2f_enabled is not None:
             params["u2f_enabled"] = "1" if u2f_enabled else "0"
-        response = self.json_api_call("POST", "/admin/v1/groups", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/groups", params)
 
     def delete_group(self, group_id):
         """
@@ -1727,7 +1705,7 @@ class Admin(client.Client):
 
         group_id - The id of the group (Required)
         """
-        return self.json_api_call("DELETE", "/admin/v1/groups/" + group_id, {})
+        return self.json_api_call("DELETE", f"/admin/v1/groups/{group_id}", {})
 
     def modify_group(
         self,
@@ -1771,8 +1749,7 @@ class Admin(client.Client):
             params["mobile_otp_enabled"] = "1" if mobile_otp_enabled else "0"
         if u2f_enabled is not None:
             params["u2f_enabled"] = "1" if u2f_enabled else "0"
-        response = self.json_api_call("POST", "/admin/v1/groups/" + group_id, params)
-        return response
+        return self.json_api_call("POST", f"/admin/v1/groups/{group_id}", params)
 
     def get_integrations(self):
         """
@@ -1784,8 +1761,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         params = {}
-        response = self.json_api_call("GET", "/admin/v1/integrations", params)
-        return response
+        return self.json_api_call("GET", "/admin/v1/integrations", params)
 
     def get_integration(self, integration_key):
         """
@@ -1798,8 +1774,9 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         params = {}
-        response = self.json_api_call("GET", "/admin/v1/integrations/" + integration_key, params)
-        return response
+        return self.json_api_call(
+            "GET", f"/admin/v1/integrations/{integration_key}", params
+        )
 
     def create_integration(  # noqa: MC0001
         self,
@@ -1893,8 +1870,7 @@ class Admin(client.Client):
             params["groups_allowed"] = groups_allowed
         if self_service_allowed is not None:
             params["self_service_allowed"] = "1" if self_service_allowed else "0"
-        response = self.json_api_call("POST", "/admin/v1/integrations", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/integrations", params)
 
     def delete_integration(self, integration_key):
         """Deletes an integration.
@@ -1905,7 +1881,7 @@ class Admin(client.Client):
 
         """
         integration_key = six.moves.urllib.parse.quote_plus(str(integration_key))
-        path = "/admin/v1/integrations/%s" % integration_key
+        path = f"/admin/v1/integrations/{integration_key}"
         return self.json_api_call("DELETE", path, {})
 
     def update_integration(  # noqa: MC0001
@@ -1966,7 +1942,7 @@ class Admin(client.Client):
 
         """
         integration_key = six.moves.urllib.parse.quote_plus(str(integration_key))
-        path = "/admin/v1/integrations/%s" % integration_key
+        path = f"/admin/v1/integrations/{integration_key}"
         params = {}
         if name is not None:
             params["name"] = name
@@ -2010,8 +1986,7 @@ class Admin(client.Client):
         if not params:
             raise TypeError("No new values were provided")
 
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def get_admins(self):
         """
@@ -2022,8 +1997,7 @@ class Admin(client.Client):
 
         Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/admins", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/admins", {})
 
     def get_admin(self, admin_id):
         """
@@ -2036,9 +2010,8 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         admin_id = six.moves.urllib.parse.quote_plus(str(admin_id))
-        path = "/admin/v1/admins/%s" % admin_id
-        response = self.json_api_call("GET", path, {})
-        return response
+        path = f"/admin/v1/admins/{admin_id}"
+        return self.json_api_call("GET", path, {})
 
     def add_admin(self, name, email, phone, password, role=None):
         """
@@ -2065,8 +2038,7 @@ class Admin(client.Client):
             params["password"] = password
         if role is not None:
             params["role"] = role
-        response = self.json_api_call("POST", "/admin/v1/admins", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/admins", params)
 
     def update_admin(
         self,
@@ -2090,7 +2062,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         admin_id = six.moves.urllib.parse.quote_plus(str(admin_id))
-        path = "/admin/v1/admins/%s" % admin_id
+        path = f"/admin/v1/admins/{admin_id}"
         params = {}
         if name is not None:
             params["name"] = name
@@ -2100,8 +2072,7 @@ class Admin(client.Client):
             params["password"] = password
         if password_change_required is not None:
             params["password_change_required"] = password_change_required
-        response = self.json_api_call("POST", path, params)
-        return response
+        return self.json_api_call("POST", path, params)
 
     def delete_admin(self, admin_id):
         """
@@ -2112,7 +2083,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         admin_id = six.moves.urllib.parse.quote_plus(str(admin_id))
-        path = "/admin/v1/admins/%s" % admin_id
+        path = f"/admin/v1/admins/{admin_id}"
         return self.json_api_call("DELETE", path, {})
 
     def reset_admin(self, admin_id):
@@ -2124,7 +2095,7 @@ class Admin(client.Client):
         Raises RuntimeError on error.
         """
         admin_id = six.moves.urllib.parse.quote_plus(str(admin_id))
-        path = "/admin/v1/admins/%s/reset" % admin_id
+        path = f"/admin/v1/admins/{admin_id}/reset"
         return self.json_api_call("POST", path, {})
 
     def activate_admin(self, email, send_email=False, valid_days=None):
@@ -2156,8 +2127,7 @@ class Admin(client.Client):
             params["send_email"] = "1" if send_email else "0"
         if valid_days is not None:
             params["valid_days"] = str(valid_days)
-        response = self.json_api_call("POST", "/admin/v1/admins/activate", params)
-        return response
+        return self.json_api_call("POST", "/admin/v1/admins/activate", params)
 
     def get_logo(self):
         """
@@ -2197,8 +2167,7 @@ class Admin(client.Client):
         Notes:
             Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/u2ftokens", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/u2ftokens", {})
 
     def get_u2ftoken_by_id(self, registration_id):
         """Returns u2ftoken specified by registration_id.
@@ -2214,9 +2183,8 @@ class Admin(client.Client):
             Raises RuntimeError on error.
         """
         registration_id = six.moves.urllib.parse.quote_plus(str(registration_id))
-        path = "/admin/v1/u2ftokens/" + registration_id
-        response = self.json_api_call("GET", path, {})
-        return response
+        path = f"/admin/v1/u2ftokens/{registration_id}"
+        return self.json_api_call("GET", path, {})
 
     def delete_u2ftoken(self, registration_id):
         """Deletes a u2ftoken. If the u2ftoken is already
@@ -2230,9 +2198,8 @@ class Admin(client.Client):
             Raises RuntimeError on error.
         """
         registration_id = six.moves.urllib.parse.quote_plus(str(registration_id))
-        path = "/admin/v1/u2ftokens/" + registration_id
-        response = self.json_api_call("DELETE", path, {})
-        return response
+        path = f"/admin/v1/u2ftokens/{registration_id}"
+        return self.json_api_call("DELETE", path, {})
 
     def get_bypass_codes(self):
         """Gets a list of bypass codes.
@@ -2243,8 +2210,7 @@ class Admin(client.Client):
         Notes:
             Raises RuntimeError on error.
         """
-        response = self.json_api_call("GET", "/admin/v1/bypass_codes", {})
-        return response
+        return self.json_api_call("GET", "/admin/v1/bypass_codes", {})
 
     def delete_bypass_code_by_id(self, bypass_code_id):
         """Deletes a bypass code. If the bypass code is already
@@ -2257,6 +2223,5 @@ class Admin(client.Client):
             Raises RuntimeError on error.
         """
         registration_id = six.moves.urllib.parse.quote_plus(str(bypass_code_id))
-        path = "/admin/v1/bypass_codes/" + bypass_code_id
-        response = self.json_api_call("DELETE", path, {})
-        return response
+        path = f"/admin/v1/bypass_codes/{bypass_code_id}"
+        return self.json_api_call("DELETE", path, {})

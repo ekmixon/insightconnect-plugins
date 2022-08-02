@@ -17,18 +17,17 @@ class SubmitUrl(komand.Action):
 
     def run(self, params={}):
         server = self.connection.server
-        endpoint = server + "/tasks/create/url"
+        endpoint = f"{server}/tasks/create/url"
         url = params.get("url", "")
         data = {"url": url}
 
         try:
             r = requests.post(endpoint, data=data)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

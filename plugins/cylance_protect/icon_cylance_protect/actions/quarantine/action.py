@@ -34,8 +34,7 @@ class Quarantine(insightconnect_plugin_runtime.Action):
         device_obj = self.connection.client.get_agent_details(agent)
 
         if whitelist:
-            matches = find_in_whitelist(device_obj, whitelist)
-            if matches:
+            if matches := find_in_whitelist(device_obj, whitelist):
                 raise PluginException(
                     cause="Agent found in the whitelist.",
                     assistance=f"If you would like to block this host, remove {str(matches)[1:-1]} from the whitelist.",

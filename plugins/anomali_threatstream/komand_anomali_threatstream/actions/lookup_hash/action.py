@@ -24,10 +24,14 @@ class LookupHash(komand.Action):
 
     def run(self, params={}):
         self.request = copy(self.connection.request)
-        self.request.url, self.request.method = self.request.url + "/intelligence", "GET"
+        self.request.url, self.request.method = (
+            f"{self.request.url}/intelligence",
+            "GET",
+        )
+
 
         # Pagination flag and results placeholder
-        self.continue_paging, self.results = True, list()
+        self.continue_paging, self.results = True, []
         # Update the request with the supplied IP address, page size, and offset
         self.request.params.update({"md5": params["hash"], "limit": 1000, "offset": 0})
 

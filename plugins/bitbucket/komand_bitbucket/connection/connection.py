@@ -24,7 +24,7 @@ class Connection(komand.Connection):
                 self.username,
                 params.get(Input.CREDENTIALS).get("password"),
             )
-            user = self.bucket_session.get(self.base_api + "/user")
+            user = self.bucket_session.get(f"{self.base_api}/user")
             user_obj = user.json()
             if user.status_code == 200:
                 self.logger.info("Connect: " + user_obj["username"] + " Connected.")
@@ -35,7 +35,7 @@ class Connection(komand.Connection):
 
     def test(self):
         try:
-            api_call = self.base_api + "/user"
+            api_call = f"{self.base_api}/user"
             response = self.bucket_session.get(api_call)
             if response.status_code == 200:
                 return {"status": "API 2.0 connection test successful"}

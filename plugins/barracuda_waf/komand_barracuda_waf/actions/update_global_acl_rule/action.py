@@ -15,7 +15,13 @@ class UpdateGlobalAclRule(komand.Action):
         action = "security_policies"
         self.connection.connector.check_required_params(params, ["policy_id", "id"])
 
-        action = action + "/" + params.get("policy_id") + "/global_acls/" + params.get("id")
+        action = (
+            f"{action}/"
+            + params.get("policy_id")
+            + "/global_acls/"
+            + params.get("id")
+        )
+
 
         del params["id"]
         del params["policy_id"]

@@ -34,11 +34,7 @@ class Connection(komand.Connection):
         # self.session.verify = self.ssl_verify
 
     def get_address_group(self, address_group_name, is_ipv6):
-        endpoint = "firewall/addrgrp"
-
-        if is_ipv6:
-            endpoint = "firewall/addrgrp6"
-
+        endpoint = "firewall/addrgrp6" if is_ipv6 else "firewall/addrgrp"
         result = self.call_api(
             path=endpoint,
             params={
@@ -48,7 +44,7 @@ class Connection(komand.Connection):
         )
 
         groups = result.json().get("results")
-        if not len(groups) > 0:
+        if len(groups) <= 0:
             raise PluginException(
                 cause=f"Could not find address group '{address_group_name}' in results.\n",
                 assistance=f"Please make sure the group '{address_group_name}' exists.\n",

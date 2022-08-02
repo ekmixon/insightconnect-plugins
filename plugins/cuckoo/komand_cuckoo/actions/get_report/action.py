@@ -19,9 +19,7 @@ class GetReport(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         task_id = params.get("task_id", "")
-        desired_format = params.get("format", "")
-
-        if desired_format:
+        if desired_format := params.get("format", ""):
             endpoint = server + "/tasks/report/%d/%s" % (task_id, desired_format)
         else:
             endpoint = server + "/tasks/report/%d" % (task_id)
@@ -40,7 +38,7 @@ class GetReport(komand.Action):
                 return {"report": base64.b64encode(content).decode("UTF-8")}
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

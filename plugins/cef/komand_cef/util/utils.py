@@ -13,7 +13,6 @@ cef_pipe_re = re.compile(r"\\*?\|")
 
 
 def parse_cef(s):
-    d = dict()
     fields = []
     field_start = 0
     for match in cef_pipe_re.finditer(s):
@@ -33,12 +32,14 @@ def parse_cef(s):
     if "CEF:0" not in fields[0]:
         raise PluginException(cause="Wrong value", assistance="CEF string is missing CEF:0 header")
 
-    d["device_vendor"] = fields[1]
-    d["device_product"] = fields[2]
-    d["device_version"] = fields[3]
-    d["signature_id"] = fields[4]
-    d["name"] = fields[5]
-    d["severity"] = fields[6]
+    d = {
+        "device_vendor": fields[1],
+        "device_product": fields[2],
+        "device_version": fields[3],
+        "signature_id": fields[4],
+        "name": fields[5],
+        "severity": fields[6],
+    }
 
     parse_cef_extension(d, s[field_start:])
     if "_cefVer" not in d:
@@ -63,8 +64,7 @@ def parse_cef_extension(d, s):
     # The first key-value pair may be preceded by a space. If it is not, add
     # it to d .
     leftover = s[:last_start]
-    match = cef_first_key_re.match(leftover)
-    if match:
+    if match := cef_first_key_re.match(leftover):
         d[match.group(1)] = unescape_cef_value(s[match.end() : last_start])
     return d
 

@@ -18,13 +18,13 @@ class RetrieveFileInstance(komand.Action):
         file_catalog_id = params.get("file_catalog_id")
         computer_id = params.get("computer_id")
 
-        url = self.connection.host + "/api/bit9platform/v1/fileInstance"
+        url = f"{self.connection.host}/api/bit9platform/v1/fileInstance"
         query = f"q=computerId:{computer_id}&q=fileCatalogId:{file_catalog_id}"
 
         self.logger.info(f"URL: {url}")
         self.logger.info(f"Query: {query}")
 
-        full_url = url + "?" + query
+        full_url = f"{url}?{query}"
 
         self.logger.info(f"Full URL: {full_url}")
 

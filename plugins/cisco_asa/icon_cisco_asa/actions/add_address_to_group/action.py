@@ -26,12 +26,7 @@ class AddAddressToGroup(insightconnect_plugin_runtime.Action):
             )
 
         all_members = group.get("members")
-        found = False
-        for member in all_members:
-            if member.get("value") == address:
-                found = True
-                break
-
+        found = any(member.get("value") == address for member in all_members)
         if found:
             self.logger.info(f"{address} already in {group_name}")
         else:

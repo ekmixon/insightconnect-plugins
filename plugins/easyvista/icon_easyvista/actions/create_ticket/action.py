@@ -46,7 +46,7 @@ class CreateTicket(insightconnect_plugin_runtime.Action):
         }
         catalog = params.get(Input.CATALOG)
         if validators.uuid(catalog):
-            data.update({"catalog_guid": catalog})
+            data["catalog_guid"] = catalog
         else:
-            data.update({"catalog_code": catalog})
+            data["catalog_code"] = catalog
         return {Output.RESULT: self.connection.client.ticket_action("POST", {"requests": [data]})}

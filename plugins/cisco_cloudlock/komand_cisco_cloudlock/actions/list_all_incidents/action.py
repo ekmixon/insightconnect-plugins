@@ -24,7 +24,7 @@ class ListAllIncidents(komand.Action):
         offset = params.get("offset")
         limit = params.get("limit")
 
-        params = dict()
+        params = {}
         if severity is not None and len(severity) != 0:
             params["severity"] = severity
         if created_before is not None and len(created_before) != 0:

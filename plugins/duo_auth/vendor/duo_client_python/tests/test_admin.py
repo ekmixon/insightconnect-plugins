@@ -28,7 +28,10 @@ class TestAdmin(unittest.TestCase):
     def test_get_users(self):
         response = self.client.get_users()
         self.assertEqual(response["method"], "GET")
-        self.assertEqual(response["uri"], "/admin/v1/users?account_id=%s" % self.client.account_id)
+        self.assertEqual(
+            response["uri"], f"/admin/v1/users?account_id={self.client.account_id}"
+        )
+
         self.assertEqual(response["body"], None)
 
     # GET with params

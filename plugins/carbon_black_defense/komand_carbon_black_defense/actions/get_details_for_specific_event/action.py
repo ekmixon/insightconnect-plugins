@@ -33,9 +33,9 @@ class GetDetailsForSpecificEvent(komand.Action):
         except ValueError:
             self.logger.error(result.text)
             raise Exception(
-                f"Error: Received an unexpected response"
-                f" (non-JSON or no response was received). Raw response in logs."
+                'Error: Received an unexpected response (non-JSON or no response was received). Raw response in logs.'
             )
+
         if result.status_code == 200:
             return {
                 Output.SUCCESS: data["success"],

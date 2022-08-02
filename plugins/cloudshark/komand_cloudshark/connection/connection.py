@@ -17,7 +17,7 @@ class Connection(komand.Connection):
             self.logger.error("Cloudshark API token not supplied")
             raise Exception("Cloudshark API token not supplied")
 
-        base = server + "/api/v1/"
+        base = f"{server}/api/v1/"
 
         self.server = server
         self.base = base

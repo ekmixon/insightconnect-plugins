@@ -39,5 +39,3 @@ class TestDisableUser(TestCase):
 
         success = test_enable.run(action_params)
         self.assertTrue(success)
-
-        pass

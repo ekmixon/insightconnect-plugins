@@ -27,13 +27,12 @@ def determine_agent_type(agent):
 def match_whitelist(agent, whitelist, logger):
     object_type = determine_agent_type(agent)
 
-    if object_type == HOST or object_type == DEVICE_ID:
-        if agent in whitelist:
-            logger.info(f" Whitelist matched\n{agent} was found in whitelist")
-            return True
-        else:
+    if object_type in [HOST, DEVICE_ID]:
+        if agent not in whitelist:
             return False
 
+        logger.info(f" Whitelist matched\n{agent} was found in whitelist")
+        return True
     # if 1.1.1.1/32 - remove /32
     trimmed_address = re.sub(r"/32$", "", agent)
 

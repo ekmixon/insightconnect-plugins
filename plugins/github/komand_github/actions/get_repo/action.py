@@ -18,9 +18,10 @@ class GetRepo(komand.Action):
             title = params.get("title")
             owner = params.get("owner")
             results = requests.get(
-                "https://api.github.com/repos/" + owner + "/" + title,
+                f"https://api.github.com/repos/{owner}/{title}",
                 auth=self.connection.basic_auth,
             )
+
             return {"data": utils.clean(results.json())}
         except Exception as e:
-            self.logger.error("Repo retreival failed. Error: " + str(e))
+            self.logger.error(f"Repo retreival failed. Error: {str(e)}")

@@ -39,9 +39,8 @@ def get_version(base_version=BASE_VERSION):
 
     version = base_version.base_version
     if base_version.is_prerelease or is_prerelease_branch():
-        git_changeset = get_git_changeset()
-        if git_changeset:
-            return "{}.dev{}".format(version, git_changeset)
+        if git_changeset := get_git_changeset():
+            return f"{version}.dev{git_changeset}"
 
     return str(base_version)
 
@@ -50,9 +49,9 @@ def is_prerelease_branch():
     branch = get_git_branch()
     # If we can't get a branch (None), we need to assume it is a release,
     # as the installed version won't have git
-    if branch in ("master", "stable", None) or branch.startswith("release/"):
-        return False
-    return True
+    return branch not in ("master", "stable", None) and not branch.startswith(
+        "release/"
+    )
 
 
 def run_but_ignore_errors(*args, **kwargs):
@@ -61,7 +60,7 @@ def run_but_ignore_errors(*args, **kwargs):
     with open(os.devnull, "w") as devnull:
         try:
             return subprocess.check_output(*args, shell=True, stderr=devnull, **kwargs)  # noqa: B602
-        except (subprocess.SubprocessError, FileNotFoundError, OSError):
+        except (subprocess.SubprocessError, OSError):
             return None
         except Exception:
             logger = logging.getLogger(__name__)
@@ -73,8 +72,7 @@ def get_git_branch():
     # Jenkins may not do a full checkout so we use the branch reported
     # via env variables.
     repo_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-    branch = os.environ.get("GIT_BRANCH", os.environ.get("BRANCH_NAME"))
-    if branch:
+    if branch := os.environ.get("GIT_BRANCH", os.environ.get("BRANCH_NAME")):
         # Git Plugin specifies a format for branch name,
         # but our experience prooved that in many case we may not get the 'origin/' part.
         # https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin
@@ -82,10 +80,10 @@ def get_git_branch():
             branch = branch[len("origin/") :]
         return branch
     else:
-        output = run_but_ignore_errors("git branch", cwd=repo_dir)
-        if output:
-            branch = re.findall(r"^\*\s+(.*)$", output.decode("utf-8"), re.MULTILINE)
-            if branch:
+        if output := run_but_ignore_errors("git branch", cwd=repo_dir):
+            if branch := re.findall(
+                r"^\*\s+(.*)$", output.decode("utf-8"), re.MULTILINE
+            ):
                 return branch[0]
 
 

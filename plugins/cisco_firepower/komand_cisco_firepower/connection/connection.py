@@ -52,12 +52,12 @@ class Connection(komand.Connection):
             total_commands += commands
             if error:
                 error_count += 1
-                self.logger.error("Error in response: {}".format(response))
-            self.logger.info("{} commands sent in this data set.".format(commands))
+                self.logger.error(f"Error in response: {response}")
+            self.logger.info(f"{commands} commands sent in this data set.")
 
-        self.logger.info("{} commands sent in total.".format(total_commands))
+        self.logger.info(f"{total_commands} commands sent in total.")
         if error_count:
-            self.logger.info("{} batches contained error(s).".format(error_count))
+            self.logger.info(f"{error_count} batches contained error(s).")
         return total_commands, error_count
 
     def read(self):
@@ -79,11 +79,10 @@ class Connection(komand.Connection):
         # Send the data type and size
         data_struct = struct.pack(self.TWO_UINT, msg_details.msg_type, msg_details.msg_length)
         self.__connection.write(data_struct)
-        self.logger.debug("Sending {} bytes to socket".format(msg_details.msg_length))
+        self.logger.debug(f"Sending {msg_details.msg_length} bytes to socket")
         self.__connection.send(msg_details.data.encode())
         self.logger.debug("Data sent.")
-        response = self.read()
-        return response
+        return self.read()
 
     def __get_max_data_size(self):
         self.logger.info("Connect: Getting max write size")
@@ -101,18 +100,21 @@ class Connection(komand.Connection):
             raise Exception(str(data))
 
         data = first(struct.unpack(self.ONE_UINT, data))
-        self.logger.debug("Max data size is {}".format(data))
+        self.logger.debug(f"Max data size is {data}")
         return data
 
     def __get_message_details(self):
         data = self.__connection.recv()
 
-        msg_type = self.__custom_unpack(data[0:4], self.ONE_UINT)
+        msg_type = self.__custom_unpack(data[:4], self.ONE_UINT)
         msg_type = first(msg_type)
         msg_value = self.__custom_unpack(data[4:8], self.ONE_UINT)
         msg_value = first(msg_value)
 
-        self.logger.debug("Got message details for type {}, and size {}".format(msg_type, msg_value))
+        self.logger.debug(
+            f"Got message details for type {msg_type}, and size {msg_value}"
+        )
+
         return MessageDetails(msg_type, msg_value)
 
     def __generate_certificate(self):
@@ -137,6 +139,4 @@ class Connection(komand.Connection):
 
     @staticmethod
     def __custom_unpack(data, fmt):
-        if data or len(data):
-            return struct.unpack(fmt, data)
-        return data
+        return struct.unpack(fmt, data) if data or len(data) else data

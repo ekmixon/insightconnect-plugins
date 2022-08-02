@@ -15,7 +15,13 @@ class UpdateDataTheft(komand.Action):
         action = "security_policies"
         self.connection.connector.check_required_params(params, ["policy_id", "id"])
 
-        action = action + "/" + params.get("policy_id") + "/data_theft_protection/" + params.get("id")
+        action = (
+            f"{action}/"
+            + params.get("policy_id")
+            + "/data_theft_protection/"
+            + params.get("id")
+        )
+
 
         r = self.connection.connector.put(
             action,

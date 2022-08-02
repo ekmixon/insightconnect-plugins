@@ -50,7 +50,7 @@ class QueryReport(komand.Action):
             request["request"]["file_name"] = file_name
         if features:
             # Error correction to allow only valid features
-            temp_list = list()
+            temp_list = []
             good_features = ["te", "av", "extraction"]
             # Loop to check all features against a list of valid features
             for feature in features_list:
@@ -58,7 +58,7 @@ class QueryReport(komand.Action):
                     temp_list.append(feature)
                 else:
                     # Log that a requested feature was invalid
-                    self.logger.error("{} is not a valid feature".format(feature))
+                    self.logger.error(f"{feature} is not a valid feature")
             # if one or more features was valid
             if temp_list:
                 features_list = temp_list
@@ -70,7 +70,7 @@ class QueryReport(komand.Action):
         if quota:
             request["request"]["quota"] = quota
         request = json.dumps(request)
-        self.logger.info("query request: {}".format(request))
+        self.logger.info(f"query request: {request}")
 
         try:
             response = self.connection.session.post(url, headers=self._HEADERS, data=request)
@@ -91,13 +91,16 @@ class QueryReport(komand.Action):
             else:
                 label = response_json["response"]["status"]["label"]
                 message = response_json["response"]["status"]["message"]
-                self.logger.error("There was a issue with the return from Checkpoint: {}".format(message))
+                self.logger.error(
+                    f"There was a issue with the return from Checkpoint: {message}"
+                )
+
                 raise Exception("Checkpoint error {code} {label}".format(code=code, label=label))
 
         else:
             status_code_message = self._HTTPERROR.get(response.status_code, self._HTTPERROR[000])
             self.logger.error("{status} ({code})".format(status=status_code_message, code=response.status_code))
-            raise Exception("HTTP Error code{}".format(response.status_code))
+            raise Exception(f"HTTP Error code{response.status_code}")
 
     def test(self):
         # TODO: Implement test function

@@ -30,7 +30,7 @@ class Connection(komand.Connection):
 
         # Authenticate to API
         # Modified from https://github.com/opendns/investigate-examples/blob/master/scripts.py
-        headers = {"Authorization": "Bearer " + self.key}
+        headers = {"Authorization": f"Bearer {self.key}"}
 
         response = requests.get(self.test_url, headers=headers)
 

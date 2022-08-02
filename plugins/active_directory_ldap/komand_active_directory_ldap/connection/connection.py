@@ -25,11 +25,7 @@ class Connection(komand.Connection):
         password = params.get(Input.USERNAME_PASSWORD).get("password")
 
         if not host.startswith("ldap://") and not host.startswith("ldaps://"):
-            if self.ssl:
-                host = f"ldaps://{host}"
-            else:
-                host = f"ldap://{host}"
-
+            host = f"ldaps://{host}" if self.ssl else f"ldap://{host}"
         host = self.host_formatter(host)
         self.logger.info(f"Connecting to {host}:{port}")
 

@@ -20,8 +20,9 @@ class UpdateIncident(komand.Action):
         public_id = params.get(Input.PUBLIC_ID)
         fields_to_update = params.get(Input.FIELDS_TO_UPDATE)
         update_data = []
-        incident = self.connection.api.get_incident(busobid=business_object_id, publicid=public_id)
-        if incident:
+        if incident := self.connection.api.get_incident(
+            busobid=business_object_id, publicid=public_id
+        ):
             for field in incident["fields"]:
                 if field["displayName"] in fields_to_update:
                     field["dirty"] = True

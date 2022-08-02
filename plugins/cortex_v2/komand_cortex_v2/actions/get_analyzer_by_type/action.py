@@ -27,6 +27,9 @@ class GetAnalyzerByType(komand.Action):
             self.logger.error(e)
             raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
         except CortexException as e:
-            raise ConnectionTestException(cause="Failed to get analyzers.", assistance="{}.".format(e))
+            raise ConnectionTestException(
+                cause="Failed to get analyzers.", assistance=f"{e}."
+            )
+
 
         return {"list": analyzers_to_dicts(analyzers)}

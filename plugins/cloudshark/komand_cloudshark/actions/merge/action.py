@@ -26,21 +26,20 @@ class Merge(komand.Action):
         url = base + token + "/merge?capture_ids=" + cids
         if filename or tags or duplicates:
             url += "&"
-            if filename:
-                url += "filename=%s" % filename
-            if tags:
-                if "filename=" in url:
-                    url += "&"
-                url += "additional_tags=%s" % tags
-            if duplicates:
-                if "additional_tags=" in url:
-                    url += "&"
-                url += "duplicates=remove"
+        if filename:
+            url += f"filename={filename}"
+        if tags:
+            if "filename=" in url:
+                url += "&"
+            url += f"additional_tags={tags}"
+        if duplicates:
+            if "additional_tags=" in url:
+                url += "&"
+            url += "duplicates=remove"
         self.logger.info("URL: %s", url)
 
         resp = komand.helper.open_url(url, data="")
-        results = json.loads(resp.read())
-        return results
+        return json.loads(resp.read())
 
     def test(self):
         """TODO: Test action"""

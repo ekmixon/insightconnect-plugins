@@ -16,8 +16,7 @@ class ReverseIp(komand.Action):
 
     def run(self, params={}):
         params = komand.helper.clean_dict(params)
-        response = utils.make_request(self.connection.api.reverse_ip, **params)
-        return response
+        return utils.make_request(self.connection.api.reverse_ip, **params)
 
     def test(self):
         """TODO: Test action"""

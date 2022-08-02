@@ -20,19 +20,19 @@ class NsWhois(komand.Action):
             ns_whois = self.connection.investigate.ns_whois([nameserver], limit=1000)
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
-        one_ns_whois = ns_whois.get(nameserver)
-        if not one_ns_whois:
+        if one_ns_whois := ns_whois.get(nameserver):
+            return {
+                "domain": [
+                    {
+                        "more_data_available": one_ns_whois.get("moreDataAvailable"),
+                        "limit": one_ns_whois.get("limit"),
+                        "domains": one_ns_whois.get("domains"),
+                        "total_results": one_ns_whois.get("totalResults"),
+                    }
+                ]
+            }
+        else:
             raise PluginException(cause="Invalid nameserver.", assistance="Unable to to retrieve domains.")
-        return {
-            "domain": [
-                {
-                    "more_data_available": one_ns_whois.get("moreDataAvailable"),
-                    "limit": one_ns_whois.get("limit"),
-                    "domains": one_ns_whois.get("domains"),
-                    "total_results": one_ns_whois.get("totalResults"),
-                }
-            ]
-        }
 
     def test(self):
         return {

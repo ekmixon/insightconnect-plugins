@@ -54,8 +54,9 @@ class CheckIfAddressInGroup(komand.Action):
         # Utilize a set to prevent duplicates
         host_names: {str} = set()
         for full_group in full_groups:
-            host_name = self._check_group_for_address(group=full_group, address=address)
-            if host_name:
+            if host_name := self._check_group_for_address(
+                group=full_group, address=address
+            ):
                 host_names.add(host_name)
 
         return host_names

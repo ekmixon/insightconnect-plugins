@@ -48,13 +48,15 @@ class ErrorHelper(object):
         # BMC error messages e.g. [{"messageType":"ERROR","messageText":"Entry ID parameter length is longer than the maximum allowed length.","messageAppendedText":"INC0000000000212","messageNumber":101}]
         try:
             message = result.json()
-            if isinstance(message, list):
-                if message[0].get("messageType") == "ERROR":
-                    raise PluginException(
-                        cause="The BMC server returned an Error",
-                        assistance="Check the error message for additional data",
-                        data=message[0],
-                    )
+            if (
+                isinstance(message, list)
+                and message[0].get("messageType") == "ERROR"
+            ):
+                raise PluginException(
+                    cause="The BMC server returned an Error",
+                    assistance="Check the error message for additional data",
+                    data=message[0],
+                )
         except json.JSONDecodeError:
             pass
         except IndexError:

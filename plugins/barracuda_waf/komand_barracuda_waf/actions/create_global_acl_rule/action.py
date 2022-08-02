@@ -18,7 +18,7 @@ class CreateGlobalAclRule(komand.Action):
         if "extended_match_sequence" not in params.get("global_acl"):
             self.connection.connector.raise_error("Required param: extended_match_sequence")
 
-        action = action + "/" + params.get("policy_id") + "/global_acls"
+        action = f"{action}/" + params.get("policy_id") + "/global_acls"
 
         r = self.connection.connector.post(
             action,

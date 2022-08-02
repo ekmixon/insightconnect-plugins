@@ -25,7 +25,8 @@ class CreateRepo(komand.Action):
                 "has_wiki": params.get(Input.HAS_WIKI),
             }
             self.connection.bucket_session.headers.update({"Content-Type": "application/json"})
-            api_call = self.connection.base_api + "/repositories/" + self.connection.username + "/" + repo_name
+            api_call = f"{self.connection.base_api}/repositories/{self.connection.username}/{repo_name}"
+
             repo = self.connection.bucket_session.post(api_call, data=json.dumps(repository))
             repo_obj = repo.json()
 

@@ -23,8 +23,5 @@ class IsolateMachine(insightconnect_plugin_runtime.Action):
         else:
             response = self.connection.api.un_isolate_machines([pylum_id], malop_id)
 
-        success = False
-        if response[pylum_id] == "Succeeded":
-            success = True
-
+        success = response[pylum_id] == "Succeeded"
         return {Output.MACHINE_ID: pylum_id, Output.SUCCESS: success}

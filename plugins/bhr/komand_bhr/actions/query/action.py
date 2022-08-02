@@ -14,10 +14,8 @@ class Query(komand.Action):
     def run(self, params={}):
         cidr = params.get("cidr")
         client = self.connection.client
-        is_blocked = True
         results = client.query(cidr)
-        if len(results) == False:
-            is_blocked = False
+        is_blocked = len(results) != False
         return {"result": results, "is_blocked": is_blocked}
 
     def test(self):

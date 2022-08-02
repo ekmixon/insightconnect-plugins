@@ -27,23 +27,22 @@ class UploadUrl(komand.Action):
         url = base + token + "/upload"
         if filename or tags or comments:
             url += "?"
-            if filename:
-                url += "filename=%s" % filename
-            if tags:
-                if "filename=" in url:
-                    url += "&"
-                url += "tags=%s" % filename
-            if comments:
-                if "tags=" in url:
-                    url += "&"
-                url += "tags=%s" % filename
+        if filename:
+            url += f"filename={filename}"
+        if tags:
+            if "filename=" in url:
+                url += "&"
+            url += f"tags={filename}"
+        if comments:
+            if "tags=" in url:
+                url += "&"
+            url += f"tags={filename}"
         self.logger.info("URL: %s", url)
 
         post = {"url": link}
         try:
             resp = requests.post(url, params=post)
-            results = json.loads(resp.text)
-            return results
+            return json.loads(resp.text)
         except requests.exceptions.HTTPError:
             self.logger.error("Requests: HTTPError: status code %s for %s", str(resp.status_code), url)
         Exception("CloudShark: Failed")

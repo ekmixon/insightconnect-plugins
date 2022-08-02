@@ -133,12 +133,11 @@ class AWSAction(Action):
 
         assert r.ok  # noqa: B101
 
-        if "properties" in self.output.schema:
-            response = helper.format_output(self.output.schema, {})
-        else:
-            response = helper.format_output(None, {})
-
-        return response
+        return (
+            helper.format_output(self.output.schema, {})
+            if "properties" in self.output.schema
+            else helper.format_output(None, {})
+        )
 
 
 class ActionHelper:
@@ -231,15 +230,9 @@ class ActionHelper:
         """
 
         if isinstance(output, dict):
-            new_dict = {}
-            for key in output:
-                new_dict[key] = self.fix_output_types(output[key])
-            return new_dict
+            return {key: self.fix_output_types(output[key]) for key in output}
         elif isinstance(output, list):
-            new_list = []
-            for item in output:
-                new_list.append(self.fix_output_types(item))
-            return new_list
+            return [self.fix_output_types(item) for item in output]
         elif isinstance(output, str):
             return output
         elif isinstance(output, botocore.response.StreamingBody):
@@ -412,9 +405,12 @@ class PaginationHelper:
             a[r] = b[r]
             a[r].extend(c)
 
-            if self.limit_key and self.limit_key in input.keys():
-                if len(a[r]) >= input[self.limit_key]:
-                    max_hit = True
-                    a[r] = a[r][: input[self.limit_key]]
+            if (
+                self.limit_key
+                and self.limit_key in input.keys()
+                and len(a[r]) >= input[self.limit_key]
+            ):
+                max_hit = True
+                a[r] = a[r][: input[self.limit_key]]
 
         return a, max_hit

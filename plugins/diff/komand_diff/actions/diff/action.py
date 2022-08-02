@@ -19,13 +19,10 @@ class Diff(komand.Action):
 
         filename = md5sum(params["label"])
         compare = params["compare"]
-        first_run = False
         different = False
         diff = ""
 
-        if not komand.helper.check_cachefile(filename):
-            first_run = True
-
+        first_run = not komand.helper.check_cachefile(filename)
         with komand.helper.open_cachefile(filename) as cache_file:
             self.logger.info("Run: Got or created cache file: {file}".format(file=cache_file))
 

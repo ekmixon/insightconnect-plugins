@@ -16,8 +16,7 @@ class Whois(komand.Action):
 
     def run(self, params={}):
         query = params.get("query")
-        response = utils.make_request(self.connection.api.whois, query)
-        return response
+        return utils.make_request(self.connection.api.whois, query)
 
     def test(self):
         """TODO: Test action"""

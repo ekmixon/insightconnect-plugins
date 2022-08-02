@@ -31,23 +31,19 @@ def dispatch_decompress(algorithm, file_bytes):
 
 
 def gzip_decompress(file_bytes):
-    decompressed = gzip.decompress(file_bytes)
-    return decompressed
+    return gzip.decompress(file_bytes)
 
 
 def bzip_decompress(file_bytes):
-    decompressed = bz2.decompress(file_bytes)
-    return decompressed
+    return bz2.decompress(file_bytes)
 
 
 def xz_decompress(file_bytes):
-    decompressed = lzma.decompress(file_bytes)
-    return decompressed
+    return lzma.decompress(file_bytes)
 
 
 def lz_decompress(file_bytes):
-    decompressed = lzma.decompress(file_bytes, format=lzma.FORMAT_ALONE)  # lzma.FORMAT_ALONE = LZMA mode
-    return decompressed
+    return lzma.decompress(file_bytes, format=lzma.FORMAT_ALONE)
 
 
 def zip_decompress(file_bytes):
@@ -60,12 +56,13 @@ def zip_decompress(file_bytes):
     zip_object = ZipFile(zip_file, "r")
     decompressed = {name: zip_object.read(name) for name in zip_object.namelist()}
     file_list = list(map(lambda file: {"filename": file[0], "content": file[1]}, decompressed.items()))
-    files = {}
-    for fil in file_list:
-        # ignore hidden files, files with no name, and decompress gz files
-        if os.path.basename(fil["filename"]) != "" and os.path.basename(fil["filename"])[0] != ".":
-            if ".gz" in fil["filename"]:
-                files[fil["filename"]] = gzip_decompress(fil["content"])
-            else:
-                files[fil["filename"]] = fil["content"]
+    files = {
+        fil["filename"]: gzip_decompress(fil["content"])
+        if ".gz" in fil["filename"]
+        else fil["content"]
+        for fil in file_list
+        if os.path.basename(fil["filename"]) != ""
+        and os.path.basename(fil["filename"])[0] != "."
+    }
+
     return files if len(files) != 1 else files[list(files.keys())[0]]

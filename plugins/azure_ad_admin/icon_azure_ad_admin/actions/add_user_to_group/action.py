@@ -36,7 +36,7 @@ class AddUserToGroup(komand.Action):
         )
         result = requests.post(add_to_group_endpoint, json=user, headers=headers)
 
-        if not result.status_code == 204:
+        if result.status_code != 204:
             raise PluginException(
                 cause=f"Add User to Group call returned an unexpected response: {result.status_code}",
                 assistance=f"Check that the group name {group_name} and user id {user_id} are correct.",

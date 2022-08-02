@@ -19,7 +19,7 @@ class GetFile(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         sha256 = params.get("sha256", "")
-        endpoint = server + "/files/get/" + sha256
+        endpoint = f"{server}/files/get/{sha256}"
 
         try:
             r = requests.get(endpoint)
@@ -29,7 +29,7 @@ class GetFile(komand.Action):
                 return {"contents": base64.b64encode(content).decode("UTF-8")}
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

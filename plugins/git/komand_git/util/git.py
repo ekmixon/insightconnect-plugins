@@ -30,16 +30,22 @@ class GitRepository:
             raise Exception("Protocol not found")
 
         if self.protocol not in self.ALLOWED_PROTOCOLS:
-            self.logger.error("ValidateProtocol: Protocol {} is not supported".format(self.protocol))
-            raise Exception("Protocol not supported: {}".format(self.protocol))
+            self.logger.error(
+                f"ValidateProtocol: Protocol {self.protocol} is not supported"
+            )
+
+            raise Exception(f"Protocol not supported: {self.protocol}")
 
     def clone_repository(self):
         self.logger.info("CloneRepository: Cloning git repository")
 
         self.cmd.call("mkdir -p ~/.ssh")
-        self.cmd.call("ssh-keyscan -H {} >> ~/.ssh/known_hosts".format(self.hostname))
-        repository_name = "{}_{}".format(self.repository_name, uuid.uuid4())
-        self.cmd.call("git clone {} {}".format(self.user_repository_url, repository_name), self.secret)
+        self.cmd.call(f"ssh-keyscan -H {self.hostname} >> ~/.ssh/known_hosts")
+        repository_name = f"{self.repository_name}_{uuid.uuid4()}"
+        self.cmd.call(
+            f"git clone {self.user_repository_url} {repository_name}", self.secret
+        )
+
         os.chdir(repository_name)
         try:
             self.cmd.call('git config user.email "komand@example.com"')
@@ -52,17 +58,17 @@ class GitRepository:
             raise e
 
     def add(self, path):
-        self.cmd.call("git add {}".format(path))
+        self.cmd.call(f"git add {path}")
 
     def remove(self, path):
-        self.cmd.call("git rm {}".format(path))
+        self.cmd.call(f"git rm {path}")
 
     def commit(self, message):
         """
         Commits current changes. Returns full commit hash.
         """
         message = message.replace('"', "")
-        self.cmd.call('git commit -m "{}"'.format(message))
+        self.cmd.call(f'git commit -m "{message}"')
         return self.cmd.call("git rev-parse HEAD")
 
     def get_commit_url(self, commit_hash):
@@ -79,8 +85,8 @@ class GitRepository:
         path = path.lstrip("/")
 
         if Path(path).exists():
-            self.logger.error("Path: File {} already exists".format(path))
-            raise FileExistsError("File {} already exists".format(path))
+            self.logger.error(f"Path: File {path} already exists")
+            raise FileExistsError(f"File {path} already exists")
         else:
             try:
                 folder_path = os.path.dirname(path)
@@ -88,7 +94,7 @@ class GitRepository:
                 with open(path, "wb") as f:
                     f.write(bytes_contents)
             except OSError as e:
-                self.logger.error("Open: OSError: Cannot write to file {}:\n{}".format(path, str(e)))
+                self.logger.error(f"Open: OSError: Cannot write to file {path}:\n{str(e)}")
                 raise e
 
     def append_line_to_file(self, path, line):
@@ -96,24 +102,23 @@ class GitRepository:
 
         f = Path(path)
         if not f.exists():
-            self.logger.error("Path: File {} does not exist".format(path))
-            raise FileNotFoundError("File {} does not exist".format(path))
+            self.logger.error(f"Path: File {path} does not exist")
+            raise FileNotFoundError(f"File {path} does not exist")
         elif not f.is_file():
-            self.logger.error("Path: {} is not a file".format(path))
-            raise FileNotFoundError("{} is not a file".format(path))
+            self.logger.error(f"Path: {path} is not a file")
+            raise FileNotFoundError(f"{path} is not a file")
         else:
             try:
                 with open(path, "a+") as f:
                     f.seek(0, 2)
-                    size = f.tell()
-                    if size:
+                    if size := f.tell():
                         f.seek(size - 1, 0)
                         end_char = f.read()
                         if end_char != "\n":
                             f.write("\n")
                     f.write(line)
             except OSError as e:
-                self.logger.error("Open: OSError: Cannot write to file {}:\n{}".format(path, str(e)))
+                self.logger.error(f"Open: OSError: Cannot write to file {path}:\n{str(e)}")
                 raise e
 
     def _get_hostname(self):
@@ -130,4 +135,4 @@ class GitRepository:
     def _get_user_repository_url(self):
         path = urlparse(self.repository_url).path
 
-        return "{}://{}@{}{}".format(self.protocol, self.username, self.hostname, path)
+        return f"{self.protocol}://{self.username}@{self.hostname}{path}"

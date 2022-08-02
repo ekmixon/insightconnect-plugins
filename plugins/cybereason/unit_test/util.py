@@ -12,14 +12,12 @@ class Util:
     def default_connector(action, connect_params: object = None):
         default_connection = Connection()
         default_connection.logger = logging.getLogger("connection logger")
-        if connect_params:
-            params = connect_params
-        else:
-            params = {
-                Input.HOSTNAME: "rapid7.com",
-                Input.CREDENTIALS: {"username": "username", "password": "password"},
-                Input.PORT: 8443,
-            }
+        params = connect_params or {
+            Input.HOSTNAME: "rapid7.com",
+            Input.CREDENTIALS: {"username": "username", "password": "password"},
+            Input.PORT: 8443,
+        }
+
         default_connection.connect(params)
         action.connection = default_connection
         action.logger = logging.getLogger("action logger")
@@ -32,6 +30,7 @@ class Util:
 
     @staticmethod
     def mocked_requests_session(*args, **kwargs):
+
         class MockResponse:
             def __init__(self, filename, status_code):
                 self.filename = filename
@@ -59,9 +58,10 @@ class Util:
             return MockResponse("empty", 200)
         elif "/rest/sensors/query" in args[1]:
             return MockResponse("sensor_details", 200)
-        elif "/rest/monitor/global/commands/isolate" in args[1]:
-            return MockResponse("isolate_machine", 200)
-        elif "/rest/monitor/global/commands/un-isolate" in args[1]:
+        elif (
+            "/rest/monitor/global/commands/isolate" in args[1]
+            or "/rest/monitor/global/commands/un-isolate" in args[1]
+        ):
             return MockResponse("isolate_machine", 200)
         elif "/rest/remediate" in args[1]:
             return MockResponse("remediate_items", 200)

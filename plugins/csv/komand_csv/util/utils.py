@@ -7,20 +7,15 @@ from io import StringIO
 def csv_syntax_good(csv_string):
     parsed = parse_csv_string(csv_string)
     size = len(parsed[0])
-    for row in parsed:
-        if len(row) != size:
-            return False
-    return True
+    return all(len(row) == size for row in parsed)
 
 
 def fields_syntax_good(fields):
     re_single = r"\s*f[0-9]+\s*"
-    re_range = r"" + re_single + "(-" + re_single + ")?"
-    re_multi = r"" + re_range + "(," + re_range + ")*"
-    pattern = re.compile("^" + re_multi + "$")
-    if pattern.match(fields):
-        return True
-    return False
+    re_range = f"{re_single}(-{re_single})?"
+    re_multi = f"{re_range}(,{re_range})*"
+    pattern = re.compile(f"^{re_multi}$")
+    return bool(pattern.match(fields))
 
 
 ##
@@ -73,11 +68,7 @@ def get_field_list(fields, num_fields):
 ##
 def parse_csv_string(csv_string):
     csv_list = csv_string.split("\n")
-    parsed = []
-    for line in csv_list:
-        if line != "":
-            parsed.append(line.split(","))
-    return parsed
+    return [line.split(",") for line in csv_list if line != ""]
 
 
 ##
@@ -89,12 +80,9 @@ def parse_csv_string(csv_string):
 def convert_csv_array(csv_array):
     item_delim = ","
     line_delim = "\n"
-    lines = []
+    lines = [item_delim.join(line) for line in csv_array]
 
-    for line in csv_array:
-        lines.append(item_delim.join(line))
-    csv_string = line_delim.join(lines)
-    return csv_string
+    return line_delim.join(lines)
 
 
 ##
@@ -105,10 +93,7 @@ def convert_csv_array(csv_array):
 # @return The list of the line with only the specified remaining fields
 ##
 def keep_fields(line, fields):
-    result = []
-    for field in fields:
-        result.append(line[field - 1])
-    return result
+    return [line[field - 1] for field in fields]
 
 
 ##
@@ -118,8 +103,6 @@ def keep_fields(line, fields):
 # @return List of dictionaries
 ##
 def csv_to_dict(s, action):
-    ret_list = []
-
     # Create array of CSV rows
     csv_list = s.split("\n")
 
@@ -130,7 +113,7 @@ def csv_to_dict(s, action):
             action.logger.info("Header: %s, Length: %s", header, len(header))
     except Exception as e:
         action.logger.error("Element 0 doesn't exist in array")
-        action.logger.error("Exception: " + str(e))
+        action.logger.error(f"Exception: {str(e)}")
         raise
 
     # Skip first line to get data
@@ -140,14 +123,11 @@ def csv_to_dict(s, action):
             action.logger.info("Sample Data: %s, Length: %s", first_row, len(first_row))
     except Exception as e:
         action.logger.error("Element 1 doesn't exist in array")
-        action.logger.error("Exception: " + str(e))
+        action.logger.error(f"Exception: {str(e)}")
         raise
 
     csv_data = csv.DictReader(csv_list)
-    for row in csv_data:
-        ret_list.append(json.loads(json.dumps(row)))
-
-    return ret_list
+    return [json.loads(json.dumps(row)) for row in csv_data]
 
 
 def json_to_csv(input_json: dict) -> str:
@@ -159,14 +139,11 @@ def json_to_csv(input_json: dict) -> str:
     for entry in input_json:
         keys.extend(list(entry.keys()))
 
-    # remove duplicated keys
-    keys = list(dict.fromkeys(keys))
-
-    if keys:
+    if keys := list(dict.fromkeys(keys)):
         csv_writer.writerow(keys)
         for entry in input_json:
-            for i in range(len(keys)):
-                entry[keys[i]] = entry.get(keys[i], "")
+            for key in keys:
+                entry[key] = entry.get(key, "")
             csv_writer.writerow(entry.values())
 
     return output.getvalue()

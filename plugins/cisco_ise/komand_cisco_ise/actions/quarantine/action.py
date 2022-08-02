@@ -24,11 +24,11 @@ class Quarantine(komand.Action):
         try:
             results = results["SearchResult"]["resources"]
         except KeyError:
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
             raise
         except Exception as e:
             self.logger.error(e)
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
             raise
 
         try:
@@ -37,18 +37,18 @@ class Quarantine(komand.Action):
                 if find["ErsAncEndpoint"]["macAddress"] == mac_address:
                     return {"ers_anc_endpoint": find["ErsAncEndpoint"]}
         except KeyError:
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
-            self.logger.error("Raw results from ANC endpoint query on IDs: " + x)
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
+            self.logger.error(f"Raw results from ANC endpoint query on IDs: {x}")
             raise
         except Exception as e:
             self.logger.error(e)
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
-            self.logger.error("Raw results from ANC endpoint query on IDs: " + x)
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
+            self.logger.error(f"Raw results from ANC endpoint query on IDs: {x}")
             raise
 
-        self.logger.error("MAC address, " + mac_address)
-        self.logger.error("Policy, " + policy)
-        self.logger.error("Raw results from ANC endpoint query," + str(results))
+        self.logger.error(f"MAC address, {mac_address}")
+        self.logger.error(f"Policy, {policy}")
+        self.logger.error(f"Raw results from ANC endpoint query,{str(results)}")
         raise ConnectionTestException(
             cause="Cisco ISE did not return a result",
             assistance="Check your configuration settings and confirm your policy exists and "

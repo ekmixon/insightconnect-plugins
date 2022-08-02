@@ -47,7 +47,7 @@ class CreateAddressObject(komand.Action):
         if whitelist:
             found = helper.match_whitelist(whitelist_ref, whitelist)
         if not found:
-            payload = {"name": name if name else host, "type": type_, "subnet": host}
+            payload = {"name": name or host, "type": type_, "subnet": host}
 
             if ip_address.version == "4":
                 endpoint = f"https://{self.connection.host}/api/v2/cmdb/firewall/address"

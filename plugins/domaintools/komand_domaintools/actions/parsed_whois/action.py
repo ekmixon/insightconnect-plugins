@@ -16,8 +16,7 @@ class ParsedWhois(komand.Action):
 
     def run(self, params={}):
         query = params.get("domain")
-        response = utils.make_request(self.connection.api.parsed_whois, query)
-        return response
+        return utils.make_request(self.connection.api.parsed_whois, query)
 
     def test(self):
         """TODO: Test action"""

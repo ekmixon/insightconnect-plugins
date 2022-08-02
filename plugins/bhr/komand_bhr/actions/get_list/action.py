@@ -13,7 +13,7 @@ class GetList(komand.Action):
 
     def run(self, params={}):
         host = self.connection.host
-        url = host + "/bhr/publist.csv"
+        url = f"{host}/bhr/publist.csv"
         result = komand.helper.open_url(url)
         return {"list": result.read().decode("utf-8")}
 

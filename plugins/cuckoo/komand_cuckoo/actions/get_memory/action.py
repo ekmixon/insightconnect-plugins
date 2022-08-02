@@ -25,14 +25,15 @@ class GetMemory(komand.Action):
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            if r.headers["Content-Type"].startswith("application/octet-stream"):
-                content = r.content
-                return {"contents": base64.b64encode(content).decode("UTF-8")}
-            else:
+            if not r.headers["Content-Type"].startswith(
+                "application/octet-stream"
+            ):
                 return r.json()
 
+            content = r.content
+            return {"contents": base64.b64encode(content).decode("UTF-8")}
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

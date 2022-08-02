@@ -19,10 +19,12 @@ class RrHistory(komand.Action):
         type = params.get("type")
 
         try:
-            if not type:
-                rr_history = self.connection.investigate.rr_history(domain)
-            else:
-                rr_history = self.connection.investigate.rr_history(domain, type)
+            rr_history = (
+                self.connection.investigate.rr_history(domain, type)
+                if type
+                else self.connection.investigate.rr_history(domain)
+            )
+
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 

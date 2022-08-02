@@ -64,9 +64,7 @@ class ResolveApprovalRequest(komand.Action):
         return {"approval_request": result}
 
     def test(self):
-        url = (
-            self.connection.host + "/api/bit9platform/v1/approvalRequest?limit=-1"
-        )  # -1 returns just the count (lightweight call)
+        url = f"{self.connection.host}/api/bit9platform/v1/approvalRequest?limit=-1"
 
         request = self.connection.session.get(url=url, verify=self.connection.verify)
 
@@ -74,6 +72,6 @@ class ResolveApprovalRequest(komand.Action):
             request.raise_for_status()
         except Exception as e:
             self.logger.error(e)
-            raise Exception("Run: HTTPError: %s" % request.text)
+            raise Exception(f"Run: HTTPError: {request.text}")
 
         return {}

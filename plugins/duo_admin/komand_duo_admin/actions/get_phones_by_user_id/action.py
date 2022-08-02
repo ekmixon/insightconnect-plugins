@@ -16,8 +16,7 @@ class GetPhonesByUserId(komand.Action):
     def run(self, params={}):
         try:
             phone_list = self.connection.admin_api.get_user_phones(params.get(Input.USER_ID))
-            results = komand.helper.clean({Output.PHONE_LIST: phone_list})
-            return results
+            return komand.helper.clean({Output.PHONE_LIST: phone_list})
         except KeyError as e:
             self.logger.error(f"User not found. Error: {str(e)}")
 

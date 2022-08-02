@@ -19,10 +19,7 @@ def timeout_pass(error_callback=None):
             try:
                 return func(*args, **kwargs)
             except timeout_decorator.timeout_decorator.TimeoutError as e:
-                if error_callback:
-                    return error_callback()
-
-                return None
+                return error_callback() if error_callback else None
 
         return func_wrapper
 

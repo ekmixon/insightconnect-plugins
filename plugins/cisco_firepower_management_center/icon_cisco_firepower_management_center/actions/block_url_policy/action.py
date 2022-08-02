@@ -19,9 +19,8 @@ class BlockUrlPolicy(komand.Action):
         acp = fmcapi.AccessPolicies(fmc=fmc)
         acp.name = policy_name
         p = acp.get()
-        if "paging" in p:
-            if p["paging"]["count"] == 0:
-                p = acp.post()
+        if "paging" in p and p["paging"]["count"] == 0:
+            p = acp.post()
         self.logger.info(p)
         return p
 

@@ -29,7 +29,7 @@ class APIFactory:
                 api = RequestAPI(url, self.logger, self.ssl_verify, self.username, self.password)
                 number = api.get_main_version()
                 break
-            except (SSLError, HTTPError, PluginException) as e:
+            except (HTTPError, PluginException) as e:
                 number = None
                 error = e
                 continue

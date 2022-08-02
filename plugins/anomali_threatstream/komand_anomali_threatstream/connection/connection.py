@@ -27,13 +27,17 @@ class Connection(komand.Connection):
             params["api_key"]["secretKey"],
         )
         # Set up the base request
-        self.request.url = threatstream_url + "/api/v1"
+        self.request.url = f"{threatstream_url}/api/v1"
         self.request.verify = params.get("ssl_verify")
         self.request.params = {"username": username, "api_key": api_key}
 
     def test(self):
         self.request = copy(self.request)
-        self.request.url, self.request.method = self.request.url + "/intelligence", "GET"
+        self.request.url, self.request.method = (
+            f"{self.request.url}/intelligence",
+            "GET",
+        )
+
 
         response = self.session.send(self.request.prepare(), verify=self.request.verify)
 

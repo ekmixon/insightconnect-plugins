@@ -44,18 +44,18 @@ def get_scan():
         print("Usage: python clam_av.py <Directory Path>")
     else:
         _now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        _file = "Result" + _now + ".txt"
+        _file = f"Result{_now}.txt"
         s = sys.argv[1]
         d = "/tmp"  # noqa: B108
         try:
-            subprocess.check_call(["clamscan", "--quiet", "-r", s, "-l", d + "/" + _file])  # noqa: B603,B607
+            subprocess.check_call(["clamscan", "--quiet", "-r", s, "-l", f"{d}/{_file}"])
         except OSError as e:
             # Error 0 - Clamscan is not installed on host
             print("0")
             return
         except:     # noqa: B110
             pass
-        open_file(d + "/" + _file)
+        open_file(f"{d}/{_file}")
 
 
 get_scan()

@@ -23,12 +23,12 @@ class QueryEndpoint(komand.Action):
                 return {"ers_endpoint": {}}
             results = result["ERSEndPoint"]
         except KeyError:
-            self.logger.error("No endpoint key in results, " + result)
+            self.logger.error(f"No endpoint key in results, {result}")
             raise
         except Exception as e:
             self.logger.error(e)
-            self.logger.error("Query results, " + result)
-            self.logger.error("Hostname, " + hostname)
+            self.logger.error(f"Query results, {result}")
+            self.logger.error(f"Hostname, {hostname}")
             raise
 
         return {"ers_endpoint": results}

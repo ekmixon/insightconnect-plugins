@@ -19,8 +19,7 @@ class ToJson(insightconnect_plugin_runtime.Action):
     def run(self, params={}):
         decoded = base64.b64decode(params[Input.CSV]).decode()
 
-        validation = params.get(Input.VALIDATION)
-        if validation:
+        if validation := params.get(Input.VALIDATION):
             csv_good = utils.csv_syntax_good(decoded)
             if not csv_good:
                 raise PluginException(cause="Malformed CSV", assistance="Wrong CSV syntax")

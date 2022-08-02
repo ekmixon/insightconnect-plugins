@@ -57,10 +57,10 @@ class ADUtils:
         for idx, value in enumerate(dn_list):
             location = value.find("\\")
             if (
-                not value[location + 1] in character_list
+                value[location + 1] not in character_list
                 and location != -1
-                and not value[location + 1] in manual_escape
-                and not value[location + 1] == "\\"
+                and value[location + 1] not in manual_escape
+                and value[location + 1] != "\\"
             ):
                 dn_list[idx] = dn_list[idx][:location] + "\\\\" + dn_list[idx][location + 1 :]
 
@@ -83,8 +83,7 @@ class ADUtils:
         :return: Will return a properly formatted search base
         """
         dc_list = [s for s in dn_list if "DC" in s]
-        search_base = ",".join(dc_list)
-        return search_base
+        return ",".join(dc_list)
 
     @staticmethod
     def format_dn(dn: str) -> (str, str):
@@ -106,8 +105,7 @@ class ADUtils:
         :param dn: A dn
         :return: returns the unescaped dn
         """
-        dn = dn.replace("\\*", "*")
-        return dn
+        return dn.replace("\\*", "*")
 
     @staticmethod
     def find_parentheses_pairs(query_string: str) -> dict:
@@ -123,12 +121,15 @@ class ADUtils:
             if char == "(":
                 temp_stack.append(idx)
             elif char == ")":
-                if len(temp_stack) == 0:
-                    raise PluginException(cause="No matching closing parentheses at: " + str(idx))
+                if not temp_stack:
+                    raise PluginException(cause=f"No matching closing parentheses at: {str(idx)}")
                 pairs[temp_stack.pop()] = idx
 
-        if len(temp_stack) > 0:
-            raise PluginException(cause="No matching opening parentheses at: " + str(temp_stack.pop()))
+        if temp_stack:
+            raise PluginException(
+                cause=f"No matching opening parentheses at: {str(temp_stack.pop())}"
+            )
+
 
         return pairs
 
@@ -151,8 +152,7 @@ class ADUtils:
 
     @staticmethod
     def escape_user_dn(user_dn: str) -> str:
-        pairs = ADUtils.find_parentheses_pairs(user_dn)
-        if pairs:
+        if pairs := ADUtils.find_parentheses_pairs(user_dn):
             # replace ( and ) when they are part of a name rather than a search parameter
             user_dn = ADUtils.escape_brackets_for_query(user_dn, pairs)
 
@@ -187,7 +187,7 @@ class ADUtils:
         try:
             account_status = user_control["userAccountControl"]
         except Exception as ex:
-            logger.error("The DN " + dn + " is not a user")
+            logger.error(f"The DN {dn} is not a user")
             raise PluginException(
                 cause=f"The DN {dn} is not a user object therefore it cannot be enabled or disabled.",
                 assistance="Please provide a valid user object and try again.",
@@ -224,9 +224,9 @@ class ADUtils:
             raise PluginException(
                 cause=f"The DN {dn} was not found.", assistance="Please provide a valid DN and try again."
             )
-        user_list = [d["attributes"] for d in conn.response if "attributes" in d]
-
-        if len(user_list) > 0:
+        if user_list := [
+            d["attributes"] for d in conn.response if "attributes" in d
+        ]:
             user_control = user_list[0]
         else:
             logger.error(f"The DN '{dn}' has no attributes")

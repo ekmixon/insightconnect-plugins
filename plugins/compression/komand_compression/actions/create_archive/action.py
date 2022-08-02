@@ -22,10 +22,11 @@ class CreateArchive(komand.Action):
         fname = (
             params.get("filename")
             if params.get("filename") != None
-            else "compressed.%s" % ("zip" if params.get("algorithm") == "zip" else "tar.gz")
+            else f'compressed.{"zip" if params.get("algorithm") == "zip" else "tar.gz"}'
         )
+
         files = params.get("files")  # Base64 encoded file as string
-        path = tempfile.mkdtemp() + "/"
+        path = f"{tempfile.mkdtemp()}/"
         for f in files:
             with open(path + f["filename"], "w") as fi:
                 fi.write(f["content"])

@@ -85,22 +85,23 @@ class AbnormalSecurityAPI:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 
     def generate_filter_params(self, from_date: str = None, to_date: str = None) -> dict:
-        params = {}
-        if from_date or to_date:
-            params = {"filter": "receivedTime"}
-            if from_date:
-                params["filter"] = params["filter"] + f" gte {self.parse_date(from_date)}"
-            if to_date:
-                params["filter"] = params["filter"] + f" lte {self.parse_date(to_date)}"
+        params = {"filter": "receivedTime"} if from_date or to_date else {}
+        if from_date:
+            params["filter"] = params["filter"] + f" gte {self.parse_date(from_date)}"
+        if to_date:
+            params["filter"] = params["filter"] + f" lte {self.parse_date(to_date)}"
         return params
 
     @staticmethod
     def parse_date(date: str) -> str:
         try:
             parsed_date = dateparser.parse(date)
-            if not parsed_date.tzinfo:
-                return parsed_date.isoformat() + "Z"
-            return parsed_date.isoformat()
+            return (
+                parsed_date.isoformat()
+                if parsed_date.tzinfo
+                else f"{parsed_date.isoformat()}Z"
+            )
+
         except Exception:
             raise PluginException(
                 cause=f"Date '{date}' is not a valid date.",

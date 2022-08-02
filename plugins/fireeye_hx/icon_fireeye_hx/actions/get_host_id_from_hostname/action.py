@@ -45,12 +45,11 @@ class GetHostIdFromHostname(komand.Action):
             response_json = response.json()
             entries = response_json["data"]["entries"]
             host_id = entries[0]["_id"]
-        except (JSONDecodeError, KeyError) as e:
+        except KeyError as e:
             raise Exception(
                 f"Error: Malformed response received from FireEye HX appliance. " f"Response was {response.text}"
             ) from e
 
-        # IndexError from accessing an item in `entries` when one did not exist, so no matches. Return a failure.
         except IndexError:
             return {Output.SUCCESS: False}
 

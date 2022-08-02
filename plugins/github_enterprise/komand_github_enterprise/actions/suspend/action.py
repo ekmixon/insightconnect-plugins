@@ -16,7 +16,12 @@ class Suspend(komand.Action):
 
     def run(self, params={}):
         # init variables
-        api_call = self.connection.api_prefix + "/users/" + params.get("username") + "/suspended"
+        api_call = (
+            f"{self.connection.api_prefix}/users/"
+            + params.get("username")
+            + "/suspended"
+        )
+
         try:
             # Promote user
             response = requests.put(
@@ -35,7 +40,7 @@ class Suspend(komand.Action):
 
     def test(self):
         try:
-            api_call = self.connection.api_prefix + "/user"
+            api_call = f"{self.connection.api_prefix}/user"
             response = requests.get(
                 api_call, auth=(self.connection.username, self.connection.secret), verify=False  # noqa: B501
             )

@@ -22,18 +22,12 @@ class Auth(komand.Action):
         if push_info:
             push_info = urllib.parse.urlencode(push_info)
 
-        user_id = None
-        if params.get(Input.USER_ID):
-            user_id = params.get(Input.USER_ID)
-
-        username = None
-        if params.get(Input.USERNAME):
-            username = params.get(Input.USERNAME)
-
+        user_id = params.get(Input.USER_ID) or None
+        username = params.get(Input.USERNAME) or None
         if (username and user_id) or (user_id is None and username is None):
             raise PluginException(cause="Wrong input", assistance="Only user_id or username should be used. Not both.")
 
-        response = self.connection.auth_api.auth(
+        return self.connection.auth_api.auth(
             factor=params[Input.FACTOR],
             username=username,
             user_id=user_id,
@@ -45,7 +39,6 @@ class Auth(komand.Action):
             device=params.get(Input.DEVICE),
             passcode=opts.get("passcode"),
         )
-        return response
 
     def test(self):
         pass

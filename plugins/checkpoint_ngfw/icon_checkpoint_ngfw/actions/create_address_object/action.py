@@ -58,9 +58,7 @@ class CreateAddressObject(komand.Action):
 
         payload = {"name": name, "ip-address": user_ip_address}
 
-        color = params.get(Input.COLOR)
-
-        if color:
+        if color := params.get(Input.COLOR):
             payload["color"] = color
 
         headers = self.connection.get_headers()

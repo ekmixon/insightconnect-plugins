@@ -20,23 +20,30 @@ class SiteReview(object):
 
     def check_response(self, response):
         if self.req.status_code != 200:
-            raise Exception("[-] HTTP {} returned".format(self.req.status_code))
-        else:
-            days = response["CategorizationResult"]["ratingDtsCutoff"]
-            more_or_less = "<"
-            if response["CategorizationResult"]["ratingDts"] == "OLDER":
-                more_or_less = ">"
-            self.category = response["CategorizationResult"]["categorization"]["categorization"]["name"]
-            self.date = f"{more_or_less} {days}"
-            self.url = response["CategorizationResult"]["url"]
+            raise Exception(f"[-] HTTP {self.req.status_code} returned")
+        days = response["CategorizationResult"]["ratingDtsCutoff"]
+        more_or_less = (
+            ">"
+            if response["CategorizationResult"]["ratingDts"] == "OLDER"
+            else "<"
+        )
+
+        self.category = response["CategorizationResult"]["categorization"]["categorization"]["name"]
+        self.date = f"{more_or_less} {days}"
+        self.url = response["CategorizationResult"]["url"]
 
 
 def main(url):
     review = SiteReview()
     response = review.site_review(url)
     review.check_response(response)
-    site_review_json = [{"url": review.url, "date_since_last_checked": review.date, "category": review.category}]
-    return site_review_json
+    return [
+        {
+            "url": review.url,
+            "date_since_last_checked": review.date,
+            "category": review.category,
+        }
+    ]
 
 
 if __name__ == "__main__":

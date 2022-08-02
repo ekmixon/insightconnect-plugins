@@ -89,8 +89,7 @@ class MockPagingHTTPConnection(MockHTTPConnection):
     _connect = _disconnect = close = getresponse = dummy
 
     def read(self):
-        metadata = {}
-        metadata["total_objects"] = len(self.objects)
+        metadata = {"total_objects": len(self.objects)}
         if self.offset + self.limit < len(self.objects):
             metadata["next_offset"] = self.offset + self.limit
         if self.offset > 0:

@@ -19,11 +19,9 @@ class GetAnalyzer(komand.Action):
         """TODO: Run action"""
         client = self.connection.client
 
-        _id = params.get("analyzer_id")
-
-        if _id:
+        if _id := params.get("analyzer_id"):
             self.logger.info("User specified Analyzer ID: %s", _id)
-            url = "{}/{}/{}".format(self.connection.url, "api/analyzer", _id)
+            url = f"{self.connection.url}/api/analyzer/{_id}"
             try:
                 out = [requests.get(url).json()]
             except:

@@ -17,10 +17,11 @@ class GetDatetime(insightconnect_plugin_runtime.Action):
         format_string = params.get(Input.FORMAT_STRING)
         use_rfc3339_format = params.get(Input.USE_RFC3339_FORMAT)
 
-        if not use_rfc3339_format:
-            current_time = time.strftime(format_string)
-        else:
-            current_time = maya.now().rfc3339()
+        current_time = (
+            maya.now().rfc3339()
+            if use_rfc3339_format
+            else time.strftime(format_string)
+        )
 
         epoch_timestamp = maya.now().epoch
 

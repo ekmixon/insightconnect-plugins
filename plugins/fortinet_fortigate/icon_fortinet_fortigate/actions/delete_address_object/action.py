@@ -33,16 +33,20 @@ class DeleteAddressObject(komand.Action):
                     assistance="Ensure that the host input is valid IP address or domain.",
                     data=host,
                 )
-            pass
-
         is_ipv6 = self.connection.get_address_object(original_host)["name"] == "address6"
 
         if is_ipv6:
             params_payload = {"mkey": original_host}
-            response = self.connection.call_api(method="DELETE", path=f"firewall/address6", params=params_payload)
+            response = self.connection.call_api(
+                method="DELETE", path="firewall/address6", params=params_payload
+            )
+
         else:
             params_payload = {"mkey": str(host)}
-            response = self.connection.call_api(method="DELETE", path=f"firewall/address", params=params_payload)
+            response = self.connection.call_api(
+                method="DELETE", path="firewall/address", params=params_payload
+            )
+
 
         try:
             json_response = response.json()

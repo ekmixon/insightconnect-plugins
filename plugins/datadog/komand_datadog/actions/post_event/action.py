@@ -33,12 +33,7 @@ class PostEvent(komand.Action):
         if not temp["tags"][0]:
             del temp["tags"]
 
-        payload = dict()
-        # create payload values only if they exist
-        for item in temp:
-            if temp[item]:
-                payload[item] = temp[item]
-
+        payload = {item: temp[item] for item, value in temp.items() if value}
         url = Events.events(self.connection.url)
         response = request.resource_request(url, "post", params=self.connection.auth, payload=payload)
         result = response.get("resource")

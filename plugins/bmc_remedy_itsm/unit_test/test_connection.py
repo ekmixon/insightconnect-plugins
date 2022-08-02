@@ -10,7 +10,7 @@ class MockResponse:
 
 
 class MockSession:
-    def post(*args, **kwargs):
+    def post(self, **kwargs):
         return MockResponse()
 
 

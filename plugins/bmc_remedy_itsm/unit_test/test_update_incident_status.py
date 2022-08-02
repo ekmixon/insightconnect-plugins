@@ -22,6 +22,7 @@ class MockConnection:
 # This method will be used by the mock to replace requests.get
 # json is a named arg that we're overriding, it must be named json
 def mocked_requests_get(*args, headers, json=None):
+
     class MockResponse:
         def __init__(self, data, status_code):
             self.status_code = status_code
@@ -35,12 +36,14 @@ def mocked_requests_get(*args, headers, json=None):
         def json(self):
             return self.json_
 
-    mock_object = {"values": {"Status": "Assigned", "Entry ID": "INC000000000108"}}
-
     if args[0] == "http://test.url/api/arsys/v1/entry/HPD%3AIncidentInterface/INC000000000108|INC000000000108":
-        if not json:  # If there's no body, this is a get, else it's a put
-            return MockResponse(mock_object, 200)
-        return MockResponse(mock_object, 204)
+        mock_object = {"values": {"Status": "Assigned", "Entry ID": "INC000000000108"}}
+
+        return (
+            MockResponse(mock_object, 204)
+            if json
+            else MockResponse(mock_object, 200)
+        )
 
     print(f"Attempted to get:\n{args[0]}")
     return MockResponse(None, 404)

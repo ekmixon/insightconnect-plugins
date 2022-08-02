@@ -17,9 +17,14 @@ class DeleteFile(komand.Action):
 
     def run(self, params={}):
         try:
-            sensor = self.connection.carbon_black.select(Sensor).where("hostname:%s" % params.get("hostname")).first()
+            sensor = (
+                self.connection.carbon_black.select(Sensor)
+                .where(f'hostname:{params.get("hostname")}')
+                .first()
+            )
+
             if sensor is None:
-                self.logger.info("Failed to delete %s" % params.get("object_path"))
+                self.logger.info(f'Failed to delete {params.get("object_path")}')
                 return {"success": False}
 
             self.logger.info("Connected to sensor...")
@@ -30,7 +35,7 @@ class DeleteFile(komand.Action):
                 return {"success": True}
 
         except cbapi.live_response_api.LiveResponseError as e:
-            self.logger.error("Error occurred: %s" % e)
+            self.logger.error(f"Error occurred: {e}")
             raise
         except cbapi.errors.TimeoutError:
             self.logger.error(
@@ -39,16 +44,18 @@ class DeleteFile(komand.Action):
             raise
         except cbapi.response.live_response_api.LiveResponseError as e:
             self.logger.error(
-                "Error occurred: error during the execution of a Live Response command on an endpoint. Details: %s" % e
+                f"Error occurred: error during the execution of a Live Response command on an endpoint. Details: {e}"
             )
+
             raise
         except cbapi.errors.ApiError as e:
             self.logger.error(
-                "Error occurred: attempted to execute a command that is not supported by the sensor. Details: %s" % e
+                f"Error occurred: attempted to execute a command that is not supported by the sensor. Details: {e}"
             )
+
             raise
         except cbapi.errors.ServerError as e:
-            self.logger.error("Error occurred: server error occurred. Details: %s" % e)
+            self.logger.error(f"Error occurred: server error occurred. Details: {e}")
             raise
 
     def test(self):

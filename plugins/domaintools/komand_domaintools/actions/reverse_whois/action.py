@@ -22,10 +22,9 @@ class ReverseWhois(komand.Action):
         params["query"] = params.pop("terms")
         mode = params.get("mode")
         if mode and mode not in self.MODES:
-            raise Exception("DomainTools: mode must be one of: {}".format(", ".join(self.MODES)))
+            raise Exception(f'DomainTools: mode must be one of: {", ".join(self.MODES)}')
 
-        response = utils.make_request(self.connection.api.reverse_whois, **params)
-        return response
+        return utils.make_request(self.connection.api.reverse_whois, **params)
 
     def test(self):
         """TODO: Test action"""

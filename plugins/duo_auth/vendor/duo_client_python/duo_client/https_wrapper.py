@@ -72,10 +72,7 @@ class CertValidatingHTTPSConnection(six.moves.http_client.HTTPConnection):
         self.key_file = key_file
         self.cert_file = cert_file
         self.ca_certs = ca_certs
-        if self.ca_certs:
-            self.cert_reqs = ssl.CERT_REQUIRED
-        else:
-            self.cert_reqs = ssl.CERT_NONE
+        self.cert_reqs = ssl.CERT_REQUIRED if self.ca_certs else ssl.CERT_NONE
 
     def _GetValidHostsForCert(self, cert):
         """Returns a list of valid host globs for an SSL certificate.
@@ -102,7 +99,7 @@ class CertValidatingHTTPSConnection(six.moves.http_client.HTTPConnection):
         hosts = self._GetValidHostsForCert(cert)
         for host in hosts:
             host_re = host.replace(".", "\.").replace("*", "[^.]*")
-            if re.search("^%s$" % (host_re,), hostname, re.I):
+            if re.search(f"^{host_re}$", hostname, re.I):
                 return True
         return False
 

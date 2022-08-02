@@ -18,14 +18,11 @@ class AddCollaborator(komand.Action):
         r = requests.session()
         try:
             results = r.put(
-                "https://api.github.com/repos/{}/{}/collaborators/{}".format(
-                    params.get("organization"),
-                    params.get("repository"),
-                    params.get("username"),
-                ),
+                f'https://api.github.com/repos/{params.get("organization")}/{params.get("repository")}/collaborators/{params.get("username")}',
                 auth=self.connection.basic_auth,
                 params={"permission": params.get("permission")},
             )
+
             if results.status_code == 204:
                 return {"results": "User is already a collaborator"}
             elif results.status_code == 201:

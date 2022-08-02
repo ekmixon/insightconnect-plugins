@@ -5,17 +5,20 @@ def find_in_whitelist(device_obj: dict, whitelist: list) -> list:
         # Host Names are in lowercase when returned from Cylance
         # Normalize whitelist input to match hostnames
         lower_whitelist = [value.lower() if isinstance(value, str) else value for value in whitelist]
-        if key in ["id", "host_name"]:
-            if value in lower_whitelist:
-                whitelist_values.append(value)
+        if key in ["id", "host_name"] and value in lower_whitelist:
+            whitelist_values.append(value)
 
-    for ip_address in device_obj.get("ip_addresses"):
-        if ip_address in whitelist:
-            whitelist_values.append(ip_address)
+    whitelist_values.extend(
+        ip_address
+        for ip_address in device_obj.get("ip_addresses")
+        if ip_address in whitelist
+    )
 
-    for mac_address in device_obj.get("mac_addresses"):
-        if mac_address in whitelist:
-            whitelist_values.append(mac_address)
+    whitelist_values.extend(
+        mac_address
+        for mac_address in device_obj.get("mac_addresses")
+        if mac_address in whitelist
+    )
 
     return whitelist_values
 

@@ -18,12 +18,11 @@ class AddMembership(komand.Action):
         r = requests.session()
         try:
             results = r.put(
-                "https://api.github.com/orgs/{}/memberships/{}".format(
-                    params.get("organization"), params.get("username")
-                ),
+                f'https://api.github.com/orgs/{params.get("organization")}/memberships/{params.get("username")}',
                 auth=self.connection.basic_auth,
                 params={"role": params.get("role")},
             )
+
             if results.status_code == 403:
                 raise Exception("Account may need org permissions added")
             if results.status_code == 404:

@@ -45,5 +45,4 @@ class UpdateUserInfo(komand.Action):
 
         if result.status_code not in range(200, 209):
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=result.text)
-            return {Output.SUCCESS: False}
         return {Output.SUCCESS: True}

@@ -16,7 +16,7 @@ class UserInfo(komand.Action):
     def run(self, params={}):
         client = self.connection.box_connection
         user = client.user(user_id=params.get("user_id")).get()
-        info = {
+        return {
             "address": user.address,
             "avatar_url": user.avatar_url,
             "id": user.id,
@@ -28,8 +28,6 @@ class UserInfo(komand.Action):
             "space_used": user.space_used,
             "timezone": user.timezone,
         }
-
-        return info
 
     def test(self):
         try:

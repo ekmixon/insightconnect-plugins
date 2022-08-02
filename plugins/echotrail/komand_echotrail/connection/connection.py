@@ -16,7 +16,7 @@ class Connection(komand.Connection):
         self.server = params.get("server", "https://api.echotrail.io:443")
 
     def test(self):
-        url = self.server + "/v1/private/insights/cmd.exe/rank"
+        url = f"{self.server}/v1/private/insights/cmd.exe/rank"
         headers = {"X-Api-Key": self.token}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -25,12 +25,16 @@ class Connection(komand.Connection):
             raise ConnectionTestException(preset=ConnectionTestException.Preset.API_KEY)
         elif response.status_code == 404:
             raise ConnectionTestException(
-                cause="Unable to reach instance at: %s." % url,
-                assistance="Verify the server at the URL configured in your plugin " "connection is correct.",
+                cause=f"Unable to reach instance at: {url}.",
+                assistance="Verify the server at the URL configured in your plugin "
+                "connection is correct.",
             )
+
         elif response.status_code == 429:
             raise ConnectionTestException(preset=ConnectionTestException.Preset.RATE_LIMIT)
         elif response.status_code == 503:
             raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVER_ERROR)
         else:
-            raise ConnectionTestException(cause="Unhandled error occurred: %s" % response.content)
+            raise ConnectionTestException(
+                cause=f"Unhandled error occurred: {response.content}"
+            )

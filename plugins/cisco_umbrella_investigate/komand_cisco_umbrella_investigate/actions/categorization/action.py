@@ -25,16 +25,15 @@ class Categorization(komand.Action):
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 
-        categories = []
-        for key, value in remoteCategories.items():
-            categories.append(
-                {
-                    "name": key,
-                    "status": value.get("status"),
-                    "security_categories": value.get("security_categories"),
-                    "content_categories": value.get("content_categories"),
-                }
-            )
+        categories = [
+            {
+                "name": key,
+                "status": value.get("status"),
+                "security_categories": value.get("security_categories"),
+                "content_categories": value.get("content_categories"),
+            }
+            for key, value in remoteCategories.items()
+        ]
 
         return {"categories": categories}
 

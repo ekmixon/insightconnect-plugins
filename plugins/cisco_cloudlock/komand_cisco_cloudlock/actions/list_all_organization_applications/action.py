@@ -22,7 +22,7 @@ class ListAllOrganizationApplications(komand.Action):
         offset = params.get("offset")
         limit = params.get("limit")
 
-        params = dict()
+        params = {}
         if input_classification is not None:
             params["classification"] = input_classification
         params["offset"] = offset

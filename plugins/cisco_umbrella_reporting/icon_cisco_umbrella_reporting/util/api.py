@@ -51,7 +51,7 @@ class CiscoUmbrellaReportingAPI:
             if response.status_code >= 400:
                 response_data = response.text
                 raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response_data)
-            if response.status_code == 201 or response.status_code == 204:
+            if response.status_code in [201, 204]:
                 return {}
             if 200 <= response.status_code < 300:
                 return response.json()

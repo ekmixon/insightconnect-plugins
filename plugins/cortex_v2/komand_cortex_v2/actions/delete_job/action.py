@@ -17,7 +17,7 @@ class DeleteJob(komand.Action):
 
     def run(self, params={}):
         job_id = params.get("job_id")
-        self.logger.info("Removing job {}".format(job_id))
+        self.logger.info(f"Removing job {job_id}")
 
         try:
             status = self.connection.api.jobs.delete(job_id)
@@ -28,7 +28,7 @@ class DeleteJob(komand.Action):
             self.logger.error(e)
             raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
         except CortexException as e:
-            self.logger.error("Failed to delete job: {}".format(e))
+            self.logger.error(f"Failed to delete job: {e}")
             status = False
 
         return {"status": status}

@@ -32,12 +32,9 @@ class RemoveAddressFromGroup(insightconnect_plugin_runtime.Action):
 
         object_id = group.get("objectId")
         all_members = group.get("members")
-        new_members = []
-        for member in all_members:
-            if member.get("value") == address:
-                continue
-
-            new_members.append(member)
+        new_members = [
+            member for member in all_members if member.get("value") != address
+        ]
 
         if len(new_members) == len(all_members):
             raise PluginException(

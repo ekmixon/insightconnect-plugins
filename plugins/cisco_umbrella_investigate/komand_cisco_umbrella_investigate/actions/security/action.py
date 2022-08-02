@@ -27,8 +27,7 @@ class Security(komand.Action):
                 assistance="A security score for the domain may not exist, please try another query.",
             )
 
-        founded = security.get("found")
-        if founded:
+        if founded := security.get("found"):
             return security
 
         raise PluginException(preset=PluginException.Preset.UNKNOWN)

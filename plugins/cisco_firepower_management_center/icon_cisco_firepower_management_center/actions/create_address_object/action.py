@@ -85,9 +85,10 @@ class CreateAddressObject(komand.Action):
         else:
             ip_list = [str(ip) for ip in IPv4Network(address)]
 
-        if ip_address(ip_list[0]).is_private and ip_address(ip_list[-1]).is_private:
-            return True
-        return False
+        return bool(
+            ip_address(ip_list[0]).is_private
+            and ip_address(ip_list[-1]).is_private
+        )
 
     @staticmethod
     def _determine_address_type(address: str) -> str:

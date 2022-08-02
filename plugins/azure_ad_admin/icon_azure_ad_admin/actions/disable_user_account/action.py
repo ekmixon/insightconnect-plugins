@@ -28,7 +28,7 @@ class DisableUserAccount(komand.Action):
         data = {"accountEnabled": False}
         result = requests.patch(endpoint, headers=headers, json=data)
 
-        if not result.status_code == 204:
+        if result.status_code != 204:
             raise PluginException(
                 cause="Disable user failed.",
                 assistance="Unexpected return code from server.",

@@ -20,20 +20,17 @@ class Utils(object):
 
     def get_headers(self, url_object):
         """Return cache related headers from urllib2 headers dictonary"""
-        if "etag" or "last-modified" in url_object.headers.dict:
-            etag = url_object.headers.get("etag")
-            lm = url_object.headers.get("last-modified")
-            return {"etag": etag, "last-modified": lm}
-
-        self.logger.error("GetHeaders: Error occurred while obtaining etag and last-modified headers")
+        etag = url_object.headers.get("etag")
+        lm = url_object.headers.get("last-modified")
+        return {"etag": etag, "last-modified": lm}
 
     def hash_url(self, url):
         """Creates a dictionary containing hashes from a url of type string"""
         try:
             self.logger.info(f"url: {url}")
             sha1 = hashlib.sha1(url.encode("utf-8")).hexdigest()  # noqa: B303
-            contents = sha1 + ".file"
-            meta_file = sha1 + ".meta"
+            contents = f"{sha1}.file"
+            meta_file = f"{sha1}.meta"
             self.logger.info(f"HashUrl: Url hashed successfully: {sha1}")
             return {"file": contents, "url": url, "hash": sha1, "metafile": meta_file}
         except Exception as e:
@@ -51,7 +48,7 @@ class Utils(object):
         }
         with komand.helper.open_cachefile(meta["metafile"]) as f:
             json.dump(data, f)
-        self.logger.info(f"CreateUrlMetaFile: MetaFile created: {str(data)}")
+        self.logger.info(f"CreateUrlMetaFile: MetaFile created: {data}")
 
     def check_url_meta_file(self, meta):
         """Check caching headers from meta info dictionary"""

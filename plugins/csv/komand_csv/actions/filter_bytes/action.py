@@ -23,11 +23,10 @@ class FilterBytes(insightconnect_plugin_runtime.Action):
 
         if csv_good and fields_good:
             csv_array = utils.parse_csv_string(decoded)
-            fields = utils.get_field_list(params[Input.FIELDS], len(csv_array[0]))
-            if fields:
-                filtered = []
-                for line in csv_array:
-                    filtered.append(utils.keep_fields(line, fields))
+            if fields := utils.get_field_list(
+                params[Input.FIELDS], len(csv_array[0])
+            ):
+                filtered = [utils.keep_fields(line, fields) for line in csv_array]
                 converted = utils.convert_csv_array(filtered)
                 return {Output.FILTERED: base64.b64encode(converted.encode()).decode()}
             else:

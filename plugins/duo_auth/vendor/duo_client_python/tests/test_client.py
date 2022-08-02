@@ -209,7 +209,7 @@ class TestCanonicalize(unittest.TestCase):
                 "Tue, 04 Jul 2017 14:12:00",
                 sig_version=999,
             )
-        self.assertEqual(e.exception.args[0], "Unknown signature version: {}".format(999))
+        self.assertEqual(e.exception.args[0], 'Unknown signature version: 999')
 
 
 class TestSign(unittest.TestCase):
@@ -244,13 +244,13 @@ class TestSign(unittest.TestCase):
             sig_version=2, ikey=ikey, skey="gtdfxv9YgVBYcF6dl2Eq17KUQJN2PLM2ODVTkvoT", **test
         )
         expected = "f01811cbbf9561623ab45b893096267fd46a5178"
-        expected = ikey + ":" + expected
+        expected = f"{ikey}:{expected}"
         if isinstance(expected, six.text_type):
             expected = expected.encode("utf-8")
         expected = base64.b64encode(expected).strip()
         if not isinstance(expected, six.text_type):
             expected = expected.decode("utf-8")
-        expected = "Basic " + expected
+        expected = f"Basic {expected}"
         self.assertEqual(actual, expected)
 
     def test_hmac_sha1_json(self):
@@ -267,11 +267,11 @@ class TestSign(unittest.TestCase):
         )
 
         sig = "7bf8cf95d689091cf7fdb72178f16d1c19ef92c1"
-        auth = "%s:%s" % (ikey, sig)
+        auth = f"{ikey}:{sig}"
         auth = auth.encode("utf-8")
         b64 = base64.b64encode(auth)
         b64 = b64.decode("utf-8")
-        expected = "Basic %s" % b64
+        expected = f"Basic {b64}"
         self.assertEqual(actual, expected)
 
 

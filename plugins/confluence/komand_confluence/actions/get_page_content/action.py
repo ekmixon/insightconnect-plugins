@@ -17,8 +17,7 @@ class GetPageContent(komand.Action):
     def run(self, params={}):
         page = params["page"]
         space = params["space"]
-        p = self.connection.client.getPage(page, space)
-        if p:
+        if p := self.connection.client.getPage(page, space):
             p = util.normalize_page(p)
             return {"content": p["content"], "found": True}
 

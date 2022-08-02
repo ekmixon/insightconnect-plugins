@@ -29,7 +29,7 @@ verify_api = duo_client.Verify(
 PHONE_NUMBER = get_next_arg('phone number ("+1-313-555-5555"): ')
 
 (pin, txid) = verify_api.call(phone=PHONE_NUMBER)
-print("Sent PIN: %s" % pin)
+print(f"Sent PIN: {pin}")
 state = ""
 while state != "ended":
     status_res = verify_api.status(txid=txid)

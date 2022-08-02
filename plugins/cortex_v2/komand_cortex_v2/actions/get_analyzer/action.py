@@ -18,9 +18,7 @@ class GetAnalyzer(komand.Action):
 
     def run(self, params={}):
         api = self.connection.api
-        analyzer_id = params.get("analyzer_id")
-
-        if analyzer_id:
+        if analyzer_id := params.get("analyzer_id"):
             self.logger.info("User specified Analyzer ID: %s", analyzer_id)
             try:
                 analyzers = [api.analyzers.get_by_id(analyzer_id)]
@@ -31,7 +29,10 @@ class GetAnalyzer(komand.Action):
                 self.logger.error(e)
                 raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
             except CortexException as e:
-                raise ConnectionTestException(cause="Failed to get analyzers.", assistance="{}.".format(e))
+                raise ConnectionTestException(
+                    cause="Failed to get analyzers.", assistance=f"{e}."
+                )
+
         else:
             try:
                 analyzers = api.analyzers.find_all({}, range="all")
@@ -42,6 +43,9 @@ class GetAnalyzer(komand.Action):
                 self.logger.error(e)
                 raise ConnectionTestException(preset=ConnectionTestException.Preset.SERVICE_UNAVAILABLE)
             except CortexException as e:
-                raise ConnectionTestException(cause="Failed to get analyzers.", assistance="{}.".format(e))
+                raise ConnectionTestException(
+                    cause="Failed to get analyzers.", assistance=f"{e}."
+                )
+
 
         return {"list": analyzers_to_dicts(analyzers)}

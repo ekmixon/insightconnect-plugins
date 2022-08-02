@@ -30,7 +30,7 @@ class CheckmarxCxSAST:
         action_name=None,
         custom_error=None,
     ):
-        url = self._base_url + "/cxrestapi" + endpoint
+        url = f"{self._base_url}/cxrestapi{endpoint}"
         req = Request(
             url=url,
             headers=self.session.headers,
@@ -70,8 +70,7 @@ class CheckmarxCxSAST:
             raise
 
         try:
-            results = resp.json()
-            return results
+            return resp.json()
         except json.JSONDecodeError:
             raise PluginException(
                 f"Error: Received an unexpected response from {action_name}"

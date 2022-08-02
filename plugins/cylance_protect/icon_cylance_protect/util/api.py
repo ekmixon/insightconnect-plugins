@@ -45,7 +45,7 @@ class CylanceProtectAPI:
             agents.extend(self.search_agents(agent, response.get("page_items")))
             i += 1
 
-        if len(agents) == 0:
+        if not agents:
             raise PluginException(
                 cause="Agent not found.",
                 assistance=f"Unable to find any agents using identifier provided: {agent}.",
@@ -69,35 +69,39 @@ class CylanceProtectAPI:
     def get_device_by_ip(ip_address: str, device_list: list) -> list:
         matching_devices = []
         for device in device_list:
-            for ip in device.get("ip_addresses"):
-                if ip_address == ip:
-                    matching_devices.append(device)
+            matching_devices.extend(
+                device for ip in device.get("ip_addresses") if ip_address == ip
+            )
+
         return matching_devices
 
     @staticmethod
     def get_device_by_mac(mac_address: str, device_list: list) -> list:
         matching_devices = []
         for device in device_list:
-            for mac in device.get("mac_addresses"):
-                if mac_address.replace(":", "-").upper() == mac:
-                    matching_devices.append(device)
+            matching_devices.extend(
+                device
+                for mac in device.get("mac_addresses")
+                if mac_address.replace(":", "-").upper() == mac
+            )
+
         return matching_devices
 
     @staticmethod
     def get_device_by_id(device_id: str, device_list: list) -> list:
-        matching_devices = []
-        for device in device_list:
-            if device_id.lower() == device.get("id"):
-                matching_devices.append(device)
-        return matching_devices
+        return [
+            device
+            for device in device_list
+            if device_id.lower() == device.get("id")
+        ]
 
     @staticmethod
     def get_device_by_name(name: str, device_list: list) -> list:
-        matching_devices = []
-        for device in device_list:
-            if name.upper() == device.get("name").upper():
-                matching_devices.append(device)
-        return matching_devices
+        return [
+            device
+            for device in device_list
+            if name.upper() == device.get("name").upper()
+        ]
 
     def create_blacklist_item(self, payload):
         return self._call_api("POST", f"{self.url}/globallists/v2", "globallist:create", json_data=payload)
@@ -120,19 +124,27 @@ class CylanceProtectAPI:
         matching_threats = []
         for identifier in identifiers:
             if match("^[a-fA-F\d]{32}$", identifier):
-                for threat in threats:
-                    if identifier.upper() == threat.get("md5"):
-                        matching_threats.append(threat)
-            elif match("^[A-Fa-f0-9]{64}$", identifier):
-                for threat in threats:
-                    if identifier.upper() == threat.get("sha256"):
-                        matching_threats.append(threat)
-            else:
-                for threat in threats:
-                    if identifier.upper() == threat.get("name").upper():
-                        matching_threats.append(threat)
+                matching_threats.extend(
+                    threat
+                    for threat in threats
+                    if identifier.upper() == threat.get("md5")
+                )
 
-        if len(matching_threats) == 0:
+            elif match("^[A-Fa-f0-9]{64}$", identifier):
+                matching_threats.extend(
+                    threat
+                    for threat in threats
+                    if identifier.upper() == threat.get("sha256")
+                )
+
+            else:
+                matching_threats.extend(
+                    threat
+                    for threat in threats
+                    if identifier.upper() == threat.get("name").upper()
+                )
+
+        if not matching_threats:
             raise PluginException(
                 cause="Threat not found.",
                 assistance=f"Unable to find any threats using identifier provided: {identifier}.",
@@ -186,10 +198,7 @@ class CylanceProtectAPI:
             if response.status_code >= 400:
                 raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
             if 200 <= response.status_code < 300:
-                if response.text:
-                    return response.json()
-                return {}
-
+                return response.json() if response.text else {}
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response.text)
         except json.decoder.JSONDecodeError as e:
             self.logger.info(f"Invalid json: {e}")

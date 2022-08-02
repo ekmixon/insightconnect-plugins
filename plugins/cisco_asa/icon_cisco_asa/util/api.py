@@ -15,7 +15,7 @@ class CiscoAsaAPI:
         port: int,
         logger: object,
     ):
-        self.url = url + ":" + str(port) + "/api/"
+        self.url = f"{url}:{port}/api/"
         self.verify_ssl = verify_ssl
         self.logger = logger
         self.username = username
@@ -33,21 +33,29 @@ class CiscoAsaAPI:
         return self.run_with_pages("objects/networkobjectgroups")
 
     def get_group(self, group_name: str):
-        for item in self.get_groups():
-            if item.get("name") == group_name or item.get("objectId") == group_name:
-                return item
-
-        return {}
+        return next(
+            (
+                item
+                for item in self.get_groups()
+                if item.get("name") == group_name
+                or item.get("objectId") == group_name
+            ),
+            {},
+        )
 
     def get_objects(self):
         return self.run_with_pages("objects/networkobjects")
 
     def get_object(self, address_object_name: str):
-        for item in self.get_objects():
-            if item.get("name") == address_object_name or item.get("objectId") == address_object_name:
-                return item
-
-        return {}
+        return next(
+            (
+                item
+                for item in self.get_objects()
+                if item.get("name") == address_object_name
+                or item.get("objectId") == address_object_name
+            ),
+            {},
+        )
 
     def delete_address_object(self, object_id: str):
         return self._call_api("DELETE", f"objects/networkobjects/{object_id}")
@@ -55,7 +63,7 @@ class CiscoAsaAPI:
     def run_with_pages(self, path):
         objects = []
         limit = 100
-        for page in range(0, 9999):
+        for page in range(9999):
             response = self._call_api("GET", path, params={"limit": limit, "offset": page * limit})
             objects.extend(response.get("items", []))
 
@@ -98,7 +106,7 @@ class CiscoAsaAPI:
             if response.status_code >= 400:
                 response_data = response.text
                 raise PluginException(preset=PluginException.Preset.UNKNOWN, data=response_data)
-            if response.status_code == 201 or response.status_code == 204:
+            if response.status_code in [201, 204]:
                 return {}
             if 200 <= response.status_code < 300:
                 return response.json()

@@ -16,10 +16,12 @@ class GetFutureTime(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        if not params.get(Input.BASE_TIMESTAMP):
-            new_timestamp = maya.MayaDT.from_rfc3339(datetime.now())
-        else:
-            new_timestamp = maya.MayaDT.from_rfc3339(params.get(Input.BASE_TIMESTAMP))
+        new_timestamp = (
+            maya.MayaDT.from_rfc3339(params.get(Input.BASE_TIMESTAMP))
+            if params.get(Input.BASE_TIMESTAMP)
+            else maya.MayaDT.from_rfc3339(datetime.now())
+        )
+
         time_unit = params.get(Input.TIME_UNIT)
         time_amount = params.get(Input.TIME_AMOUNT)
         if time_unit == "Months":

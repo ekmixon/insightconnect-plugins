@@ -23,7 +23,7 @@ class RetrieveFileCatalogEntry(komand.Action):
         try:
             response.raise_for_status()
         except:
-            raise Exception("Run: HTTPError: %s" % response.text)
+            raise Exception(f"Run: HTTPError: {response.text}")
         else:
             file_catalog_entry = response.json()
             file_catalog_entry = komand.helper.clean(file_catalog_entry)
@@ -31,15 +31,13 @@ class RetrieveFileCatalogEntry(komand.Action):
         return {"file_catalog_entry": file_catalog_entry}
 
     def test(self):
-        url = (
-            self.connection.host + "/api/bit9platform/v1/approvalRequest?limit=-1"
-        )  # -1 returns just the count (lightweight call)
+        url = f"{self.connection.host}/api/bit9platform/v1/approvalRequest?limit=-1"
 
         request = self.connection.session.get(url=url, verify=self.connection.verify)
 
         try:
             request.raise_for_status()
         except:
-            raise Exception("Run: HTTPError: %s" % request.text)
+            raise Exception(f"Run: HTTPError: {request.text}")
 
         return {}

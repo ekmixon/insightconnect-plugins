@@ -14,13 +14,11 @@ def handler_data(recv_data):
     if req_method[0] == "POST":
         data_json = json.loads(data)
         auth = data_json.get("Authorization")
-        # Check Authorization
-        if auth == "blah89d9-blah-blah-blah-blahd3d4blah":
-            COUNT += 1
-            if "Alert" in data_json:
-                print(COUNT)
-            else:
-                return False
+        if auth != "blah89d9-blah-blah-blah-blahd3d4blah":
+            return False
+        COUNT += 1
+        if "Alert" in data_json:
+            print(COUNT)
         else:
             return False
     else:
@@ -40,7 +38,7 @@ def run():
     endpoint = "0.0.0.0"
     tcp_port = 8080
 
-    host = protocol + "://" + endpoint + ":" + str(tcp_port)
+    host = f"{protocol}://{endpoint}:{tcp_port}"
     print("Listening on", host)
 
     # Open socket server to listen for messages

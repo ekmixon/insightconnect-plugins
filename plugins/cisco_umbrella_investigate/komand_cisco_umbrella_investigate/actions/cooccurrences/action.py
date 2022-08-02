@@ -22,8 +22,7 @@ class Cooccurrences(komand.Action):
         except Exception as e:
             raise PluginException(preset=PluginException.Preset.UNKNOWN, data=e)
 
-        founded = cooccurrences.get("found")
-        if founded:
+        if founded := cooccurrences.get("found"):
             self.logger.info("Found Co-occurences")
             return {"cooccurrences": cooccurrences.get("pfs2")}
 

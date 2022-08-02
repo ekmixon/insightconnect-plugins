@@ -21,9 +21,5 @@ class ElasticSearchAPI6(RequestAPI):
         return self._call_api("POST", f"{index}/{_type}/{_id}/_update", params, {"script": script})
 
     def search_documents(self, index: str, json_data: dict = {}, routing: str = None, _type: str = None) -> dict:
-        if _type:
-            path = f"{index}/{_type}/_search"
-        else:
-            path = f"{index}/_search"
-
+        path = f"{index}/{_type}/_search" if _type else f"{index}/_search"
         return super()._search_documents(path, routing, json_data)

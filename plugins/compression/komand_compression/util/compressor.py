@@ -35,54 +35,50 @@ def dispatch_compress(algorithm, file_bytes, tmpdir=""):
 
 
 def tarball_compress(file_bytes, tmpdir):
-    with tarfile.open(tmpdir + "test.tar.gz", "w:gz") as tar:
+    with tarfile.open(f"{tmpdir}test.tar.gz", "w:gz") as tar:
         tar.add(tmpdir, recursive=True)
     fbytes = []
-    with open(tmpdir + "test.tar.gz", "rb") as f:
+    with open(f"{tmpdir}test.tar.gz", "rb") as f:
         fbytes = f.read()
-    os.remove(tmpdir + "test.tar.gz")
+    os.remove(f"{tmpdir}test.tar.gz")
     return fbytes
 
 
 def gzip_compress(file_bytes):
-    compressed = gzip.compress(file_bytes)
-    return compressed
+    return gzip.compress(file_bytes)
 
 
 def bzip_compress(file_bytes):
-    compressed = bz2.compress(file_bytes)
-    return compressed
+    return bz2.compress(file_bytes)
 
 
 def xz_compress(file_bytes):
-    compressed = lzma.compress(data=file_bytes)  # Use default parameter argument of format=LZMA.FORMAT_XZ
-    return compressed
+    return lzma.compress(data=file_bytes)
 
 
 def lz_compress(file_bytes):
-    compressed = lzma.compress(data=file_bytes, format=lzma.FORMAT_ALONE)  # lzma.FORMAT_ALONE = LZMA
-    return compressed
+    return lzma.compress(data=file_bytes, format=lzma.FORMAT_ALONE)
 
 
 def zip_compress(file_bytes, tmpdir=""):
-    if file_bytes != None:
-        algorithm = zipfile.ZIP_DEFLATED  # sets compression type to deflated (standard for .zip)
-        # zip archive created in temp
-        zip_object = ZipFile("/tmp/compressed.zip", "w", algorithm)  # noqa: B108
-        zip_object.writestr("compressed", file_bytes)  # TODO use magic to correctly name files in archive
-        zip_object.close()
-        in_file = open("/tmp/compressed.zip", "rb")  # noqa: B108
-        compressed = in_file.read()
-        in_file.close()
-        # clean up
-        os.remove("/tmp/compressed.zip")  # noqa: B108
-        return compressed
-    else:
-        zipf = tmpdir + "compressed.zip"
+    if file_bytes is None:
+        zipf = f"{tmpdir}compressed.zip"
         with zipfile.ZipFile(zipf, "w", zipfile.ZIP_DEFLATED) as zippy:
-            for x in glob.glob(tmpdir + "*"):
+            for x in glob.glob(f"{tmpdir}*"):
                 zippy.write(x, os.path.basename(x))
         with open(zipf, "rb") as f:
             fbytes = f.read()
         os.remove(zipf)
         return fbytes
+
+    else:
+        algorithm = zipfile.ZIP_DEFLATED  # sets compression type to deflated (standard for .zip)
+        # zip archive created in temp
+        zip_object = ZipFile("/tmp/compressed.zip", "w", algorithm)  # noqa: B108
+        zip_object.writestr("compressed", file_bytes)  # TODO use magic to correctly name files in archive
+        zip_object.close()
+        with open("/tmp/compressed.zip", "rb") as in_file:
+            compressed = in_file.read()
+        # clean up
+        os.remove("/tmp/compressed.zip")  # noqa: B108
+        return compressed

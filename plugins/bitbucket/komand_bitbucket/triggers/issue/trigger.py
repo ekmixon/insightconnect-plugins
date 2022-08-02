@@ -31,7 +31,6 @@ class Issue(komand.Trigger):
         }
         counter = 0
         omit_list = []
-        q_params = ""
         issue_params = [
             ('and assignee.username = "%s"', params.get(Input.ASSIGNEE)),  # assignee username
             ('and milestone.name = "%s"', params.get(Input.MILESTONE)),  # milestone string
@@ -56,9 +55,7 @@ class Issue(komand.Trigger):
 
         # Create Query String of all passed in variables
         issue_params = [(query, status) for query, status in issue_params if status]
-        for ele in issue_params:
-            q_params += " " + ele[0] % (ele[1])
-
+        q_params = "".join(" " + ele[0] % (ele[1]) for ele in issue_params)
         while True:
             timestamp = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%dT%H:%M:%S").replace(" ", "T")
             if int(timestamp[15]) != 0:
@@ -69,7 +66,7 @@ class Issue(komand.Trigger):
             time.sleep(2)
             try:
                 issue_list = []
-                q_string = "created_on >= %s %s" % (timestamp, q_params)
+                q_string = f"created_on >= {timestamp} {q_params}"
                 query = urllib.parse.urlencode({"q": q_string})
                 self.connection.bucket_session.headers.update(headers)
                 api_call = (

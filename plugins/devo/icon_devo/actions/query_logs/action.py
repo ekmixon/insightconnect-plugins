@@ -17,14 +17,13 @@ class QueryLogs(insightconnect_plugin_runtime.Action):
 
         from_date = params.get(Input.FROM_DATE)
         to_date = params.get(Input.TO_DATE)
-        output = self.connection.api.query(query, from_date, to_date)
-        if output:
+        if output := self.connection.api.query(query, from_date, to_date):
             return {Output.RESULTS: insightconnect_plugin_runtime.helper.clean(output)}
 
         raise PluginException(PluginException.Preset.UNKNOWN)
 
     def _add_limit_to_query(self, query: str) -> str:
-        if not "limit" in query.lower():
+        if "limit" not in query.lower():
             self.logger.info("Adding limit to query.")
             query += " limit 1000"
             self.logger.info(f"Query: {query}")

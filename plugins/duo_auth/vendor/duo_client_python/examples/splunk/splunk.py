@@ -33,7 +33,7 @@ class BaseLog(object):
         Returns the path to the file containing the timestamp of the last
         event fetched.
         """
-        filename = self.logname + "_last_timestamp_" + self.admin_api.host
+        filename = f"{self.logname}_last_timestamp_{self.admin_api.host}"
         path = os.path.join(self.path, filename)
         return path
 
@@ -63,9 +63,8 @@ class BaseLog(object):
             last_timestamp = max(last_timestamp, event["timestamp"])
 
         path = self.get_last_timestamp_path()
-        f = open(path, "w")
-        f.write(str(last_timestamp))
-        f.close()
+        with open(path, "w") as f:
+            f.write(str(last_timestamp))
 
     def run(self):
         """
@@ -198,9 +197,9 @@ def admin_api_from_config(config_path):
     config = six.moves.configparser.ConfigParser()
     config.read(config_path)
     config_d = dict(config.items("duo"))
-    ca_certs = config_d.get("ca_certs", None)
+    ca_certs = config_d.get("ca_certs")
     if ca_certs is None:
-        ca_certs = config_d.get("ca", None)
+        ca_certs = config_d.get("ca")
 
     ret = duo_client.Admin(
         ikey=config_d["ikey"],
@@ -209,7 +208,7 @@ def admin_api_from_config(config_path):
         ca_certs=ca_certs,
     )
 
-    http_proxy = config_d.get("http_proxy", None)
+    http_proxy = config_d.get("http_proxy")
     if http_proxy is not None:
         proxy_parsed = urlparse(http_proxy)
         proxy_host = proxy_parsed.hostname

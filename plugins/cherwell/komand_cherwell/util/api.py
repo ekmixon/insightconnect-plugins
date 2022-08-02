@@ -79,8 +79,7 @@ class Cherwell:
             raise
 
         try:
-            results = resp.json()
-            return results
+            return resp.json()
         except JSONDecodeError:
             raise Exception(
                 f"Error: Received an unexpected response from {action_name}"
@@ -97,7 +96,7 @@ class Cherwell:
         :param debug: If true, log the response data
         :return: Access token as a string
         """
-        url = self._base_url + "/CherwellAPI/token"
+        url = f"{self._base_url}/CherwellAPI/token"
 
         querystring = {"auth_mode": authentication_mode}
 

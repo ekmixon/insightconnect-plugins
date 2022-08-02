@@ -26,7 +26,7 @@ class EnableUserAccount(komand.Action):
         data = {"accountEnabled": True}
         result = requests.patch(endpoint, headers=headers, json=data)
 
-        if not result.status_code == 204:
+        if result.status_code != 204:
             raise PluginException(
                 cause="Enable user failed.",
                 assistance="Unexpected return code from server.",

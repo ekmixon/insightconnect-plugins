@@ -18,7 +18,7 @@ class DeleteTask(komand.Action):
     def run(self, params={}):
         server = self.connection.server
         task_id = params.get("task_id", "")
-        endpoint = server + "/tasks/delete/" + str(task_id)
+        endpoint = f"{server}/tasks/delete/{str(task_id)}"
 
         try:
             r = requests.get(endpoint)
@@ -29,7 +29,7 @@ class DeleteTask(komand.Action):
             return response
 
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")
 
     def test(self):
         out = self.connection.test()

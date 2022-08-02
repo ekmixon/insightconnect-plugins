@@ -23,24 +23,18 @@ class Remove(komand.Action):
         if params.get("organization") and params.get("repository"):
             repo = u.get_organization(params.get("organization")).get_repo(params.get("repository"))
             repo.remove_from_collaborators(remove_user)
-            status = "Successfully removed %s from the repo %s in %s" % (
-                remove_user.name,
-                repo.full_name,
-                params.get("organization"),
-            )
+            status = f'Successfully removed {remove_user.name} from the repo {repo.full_name} in {params.get("organization")}'
 
-        # remove from organization
+
         elif params.get("organization"):
             org = u.get_organization(params.get("organization"))
             org.remove_from_members(remove_user)
-            status = "Successfully removed %s from the Organization %s" % (
-                remove_user.name,
-                params.get("organization"),
-            )
+            status = f'Successfully removed {remove_user.name} from the Organization {params.get("organization")}'
 
-        # remove from repo
+
         else:
             repo = g.get_repo(params.get("repository")).remove_from_collaborators(remove_user)
-            status = "Successfully removed %s from the repo %s" % (remove_user.name, repo.full_name)
+            status = f"Successfully removed {remove_user.name} from the repo {repo.full_name}"
+
 
         return {"status": status}

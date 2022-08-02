@@ -41,11 +41,9 @@ class TestHostFormatter(TestCase):
             "ldap://mydomain.com/stuff:345",
             "ldaps://mydomain.com/stuff:345",
         ]
-        output = list()
         conn = connection.Connection()
         conn.logger = logging.getLogger("test_host_formatter")
-        for item in host_types:
-            output.append(conn.host_formatter(item))
+        output = [conn.host_formatter(item) for item in host_types]
         self.assertEqual(
             output,
             [

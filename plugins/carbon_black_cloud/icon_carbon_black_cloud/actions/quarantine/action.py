@@ -26,11 +26,7 @@ class Quarantine(insightconnect_plugin_runtime.Action):
         agent_object = self.connection.get_agent(agent)
         agent_id = agent_object.get("id")
 
-        if quarantine_state:
-            toggle = "ON"
-        else:
-            toggle = "OFF"
-
+        toggle = "ON" if quarantine_state else "OFF"
         payload = {
             "action_type": "QUARANTINE",
             "device_id": [str(agent_id)],

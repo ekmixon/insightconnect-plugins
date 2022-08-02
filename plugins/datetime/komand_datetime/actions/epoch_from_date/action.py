@@ -22,6 +22,6 @@ class EpochFromDate(insightconnect_plugin_runtime.Action):
             self.logger.error("Non-RFC3339 date provided, input datetime must be RFC3339")
             raise
         except Exception as e:
-            self.logger.error("Error occurred: {}".format(e))
+            self.logger.error(f"Error occurred: {e}")
         else:
             return {Output.EPOCH: int(mayadt.epoch)}

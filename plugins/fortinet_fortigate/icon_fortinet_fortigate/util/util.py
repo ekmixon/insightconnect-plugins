@@ -81,9 +81,7 @@ class Helpers(object):
 
     @staticmethod
     def determine_address_type(address: str) -> str:
-        if re.search("[a-zA-Z]", address):
-            return "fqdn"
-        return "ipmask"
+        return "fqdn" if re.search("[a-zA-Z]", address) else "ipmask"
 
     def match_whitelist(self, address: str, whitelist: list) -> bool:
         """
@@ -94,12 +92,11 @@ class Helpers(object):
         """
         object_type = self.determine_address_type(address)
         if object_type == "fqdn":
-            if address in whitelist:
-                self.logger.info(f" Whitelist matched.  {address} was found in whitelist")
-                return True
-            else:
+            if address not in whitelist:
                 return False
 
+            self.logger.info(f" Whitelist matched.  {address} was found in whitelist")
+            return True
         # if 1.1.1.1/32 - remove /32
         trimmed_address = re.sub(r"/32$", "", address)
 

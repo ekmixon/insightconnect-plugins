@@ -42,8 +42,7 @@ class Verify(client.Client):
         params = {
             "txid": txid,
         }
-        response = self.json_api_call("GET", "/verify/v1/status", params)
-        return response
+        return self.json_api_call("GET", "/verify/v1/status", params)
 
     def sms(self, phone, message="The PIN is <pin>", digits=None):
         """

@@ -37,9 +37,10 @@ class SizesVm(komand.Action):
                 url,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer %s" % token,
+                    "Authorization": f"Bearer {token}",
                 },
             )
+
 
             # Handle decoding json
             try:
@@ -48,7 +49,6 @@ class SizesVm(komand.Action):
                 raise PluginException(preset=PluginException.Preset.INVALID_JSON, data=resp.read())
 
             return result_dic
-        # Handle exception
         except requests.exceptions.HTTPError as e:
             raise PluginException(cause="HTTP Error", assistance=str(e))
         except Exception:

@@ -28,22 +28,17 @@ class InfoVm(komand.Action):
             subscription_id = params.get(Input.SUBSCRIPTIONID, "")
             resource_group = params.get(Input.RESOURCEGROUP, "")
 
-            url_dict = {}
-            url_dict["modelViewAndInstanceView"] = (
-                f"/subscriptions/{subscription_id}/resourceGroups/"
+            url_dict = {
+                "modelViewAndInstanceView": f"/subscriptions/{subscription_id}/resourceGroups/"
                 f"{resource_group}/providers/Microsoft.Compute/virtualMachines/"
-                f"{vm}?$expand=instanceView&api-version={api_version}"
-            )
-            url_dict["instanceView"] = (
-                f"/subscriptions/{subscription_id}/resourceGroups/"
+                f"{vm}?$expand=instanceView&api-version={api_version}",
+                "instanceView": f"/subscriptions/{subscription_id}/resourceGroups/"
                 f"{resource_group}/providers/Microsoft.Compute"
-                f"/virtualMachines/{vm}/InstanceView?api-version={api_version}"
-            )
-            url_dict["modelView"] = (
-                f"/subscriptions/{subscription_id}/resourceGroups/"
+                f"/virtualMachines/{vm}/InstanceView?api-version={api_version}",
+                "modelView": f"/subscriptions/{subscription_id}/resourceGroups/"
                 f"{resource_group}/providers/Microsoft.Compute/virtualMachines/"
-                f"{vm}?api-version={api_version}"
-            )
+                f"{vm}?api-version={api_version}",
+            }
 
             url = server + url_dict[mode]
 
@@ -52,9 +47,10 @@ class InfoVm(komand.Action):
                 url,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer %s" % token,
+                    "Authorization": f"Bearer {token}",
                 },
             )
+
 
             # Handle decoding json
             try:
@@ -63,7 +59,6 @@ class InfoVm(komand.Action):
                 raise PluginException(preset=PluginException.Preset.INVALID_JSON, data=resp.read())
 
             return result_dic
-        # Handle exception
         except requests.exceptions.HTTPError as e:
             raise PluginException(cause="HTTP Error", assistance=str(e))
         except Exception:

@@ -24,11 +24,11 @@ class RemoveFromQuarantine(komand.Action):
                 return {"success": True}
             results = results["SearchResult"]["resources"]
         except KeyError:
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
             raise Exception("Results contained improperly formatted data. See log for more details")
         except Exception as e:
             self.logger.error(e)
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
             raise Exception("Unexpected error. See log for more details")
 
         try:
@@ -36,16 +36,16 @@ class RemoveFromQuarantine(komand.Action):
                 find = self.connection.ers.get_anc_endpoint(x["id"])
                 if find["ErsAncEndpoint"]["macAddress"] == mac_address:
                     self.logger.error(results)
-                    raise Exception("{} was not removed. See log for more details".format(mac_address))
+                    raise Exception(f"{mac_address} was not removed. See log for more details")
             return {"success": True}
         except KeyError:
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
-            self.logger.error("Raw results from ANC endpoint query on IDs: " + x)
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
+            self.logger.error(f"Raw results from ANC endpoint query on IDs: {x}")
             raise
         except Exception as e:
             self.logger.error(e)
-            self.logger.error("Raw results from ANC endpoint query: " + str(results))
-            self.logger.error("Raw results from ANC endpoint query on IDs: " + x)
+            self.logger.error(f"Raw results from ANC endpoint query: {str(results)}")
+            self.logger.error(f"Raw results from ANC endpoint query on IDs: {x}")
             raise
 
     def test(self):

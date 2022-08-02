@@ -23,19 +23,17 @@ class Forward(insightconnect_plugin_runtime.Action):
         answer_section = command_output["answer_section"]
         if answer_section is None:
             ans = ["Not found"]
+        elif params[Input.QUERY] == "SOA":
+            domain = util.safe_parse(re.search(r"SOA\t(\S+)", answer_section))
+            if util.not_empty(domain):
+                domain = domain.rstrip(".")
+            ans = [domain]
         else:
-            # Grab address
-            if params[Input.QUERY] == "SOA":
-                domain = util.safe_parse(re.search(r"SOA\t(\S+)", answer_section))
-                if util.not_empty(domain):
-                    domain = domain.rstrip(".")
-                ans = [domain]
-            else:
-                ans = answer_section.split("\n")
-                if len(ans) == 0:
-                    ans.append("NO MATCHES FOUND")
-                ans = [util.safe_parse(re.search(r"\s(\S+)$", answer)) for answer in ans]
-                ans = [answer.rstrip(".") for answer in ans]
+            ans = answer_section.split("\n")
+            if len(ans) == 0:
+                ans.append("NO MATCHES FOUND")
+            ans = [util.safe_parse(re.search(r"\s(\S+)$", answer)) for answer in ans]
+            ans = [answer.rstrip(".") for answer in ans]
 
         return {
             Output.FULLOUTPUT: command_output["fulloutput"],
@@ -43,6 +41,6 @@ class Forward(insightconnect_plugin_runtime.Action):
             Output.NAMESERVER: command_output["nameserver"],
             Output.STATUS: command_output["status"],
             Output.ANSWER: ans[0],
-            Output.LAST_ANSWER: ans[len(ans) - 1],
+            Output.LAST_ANSWER: ans[-1],
             Output.ALL_ANSWERS: ans,
         }

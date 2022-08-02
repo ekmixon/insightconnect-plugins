@@ -23,13 +23,13 @@ class Create(komand.Action):
         issue_params = {"title": params.get("title"), "body": params.get("body")}
 
         if params.get("assignee"):
-            issue_params.update({"assignee": params.get("assignee")})
+            issue_params["assignee"] = params.get("assignee")
         if params.get("milestone"):
             milestone = repo.get_milestone(params.get("milestone"))
-            issue_params.update({"milestone": milestone})
+            issue_params["milestone"] = milestone
         if params.get("labels"):
             labels_raw = params.get("labels").split(",")
-            issue_params.update({"labels": labels_raw})
+            issue_params["labels"] = labels_raw
 
         issue = repo.create_issue(**issue_params)
 

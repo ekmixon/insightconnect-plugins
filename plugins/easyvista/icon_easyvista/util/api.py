@@ -39,10 +39,7 @@ class EasyVistaApi:
             raise PluginException(preset=PluginException.Preset.INVALID_JSON, data=response.text)
 
     def ticket_action(self, method: str, payload: dict, rfc_number: str = None) -> dict:
-        if method == "POST":
-            endpoint = "requests"
-        else:
-            endpoint = f"requests/{rfc_number}"
+        endpoint = "requests" if method == "POST" else f"requests/{rfc_number}"
         return self.get_reference_number_and_href(self._call_api(method, endpoint, json=payload))
 
     def search_tickets(self, query: str) -> dict:

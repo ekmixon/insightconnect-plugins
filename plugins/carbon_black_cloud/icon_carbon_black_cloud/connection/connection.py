@@ -100,10 +100,7 @@ class Connection(insightconnect_plugin_runtime.Connection):
                 self.logger.error(result.text)
                 raise PluginException(PluginException.Preset.UNKNOWN)
 
-        if result.status_code != 204:
-            return result.json()
-        else:
-            return {}
+        return result.json() if result.status_code != 204 else {}
 
     def test(self):
         device_endpoint = "/device"

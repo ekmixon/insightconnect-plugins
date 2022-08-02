@@ -34,12 +34,10 @@ class AddAccessRule(komand.Action):
         if len(services) > 0:  # Make sure it's not a blank list
             payload["services"] = services
 
-        source = params.get(Input.SOURCE)
-        if source:
+        if source := params.get(Input.SOURCE):
             payload["source"] = source
 
-        destination = params.get(Input.DESTINATION)
-        if destination:
+        if destination := params.get(Input.DESTINATION):
             payload["destination"] = destination
 
         headers = self.connection.get_headers()

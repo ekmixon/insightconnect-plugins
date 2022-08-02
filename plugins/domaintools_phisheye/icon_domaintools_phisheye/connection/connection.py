@@ -32,9 +32,10 @@ class Connection(komand.Connection):
             raise ConnectionTestException(cause="Unable to connect to DomainTools.", assistance=f"Exception was: {e}")
 
         phisheye_terms_list = Helper.make_request(self.api.phisheye_term_list, self.logger)
-        self.terms = []
-        for term in phisheye_terms_list.get("response").get("terms"):
-            self.terms.append(term.get("term"))
+        self.terms = [
+            term.get("term")
+            for term in phisheye_terms_list.get("response").get("terms")
+        ]
 
     def test(self):
         try:

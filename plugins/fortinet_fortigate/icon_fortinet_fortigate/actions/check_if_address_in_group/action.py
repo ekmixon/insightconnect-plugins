@@ -33,7 +33,7 @@ class CheckIfAddressInGroup(komand.Action):
         address_objects = response["member"]
 
         found = False
-        addresses_found = list()
+        addresses_found = []
 
         if enable_search:
             for item in address_objects:
@@ -62,10 +62,12 @@ class CheckIfAddressInGroup(komand.Action):
                     )
                 for result in results:
                     # If address_object is a fqdn
-                    if result["type"] == "fqdn":
-                        if address_to_check == result["fqdn"]:
-                            addresses_found.append(result["fqdn"])
-                            found = True
+                    if (
+                        result["type"] == "fqdn"
+                        and address_to_check == result["fqdn"]
+                    ):
+                        addresses_found.append(result["fqdn"])
+                        found = True
                     # If address_object is a ipmask
                     if result["type"] == "ipmask":
                         # Convert returned address to CIDR
@@ -81,8 +83,8 @@ class CheckIfAddressInGroup(komand.Action):
                         if address_to_check == ipmask:
                             addresses_found.append(str(ipmask))
                             found = True
-                    # This only looks for ipmasks (IP or CIDR) and FQDN's.
-                    # Other address types like mac address are not searchable at present
+                                # This only looks for ipmasks (IP or CIDR) and FQDN's.
+                                # Other address types like mac address are not searchable at present
             return {Output.FOUND: found, Output.ADDRESS_OBJECTS: addresses_found}
 
         for item in address_objects:

@@ -33,10 +33,13 @@ class IndexDocument(insightconnect_plugin_runtime.Action):
         if parent:
             query_params["parent"] = str(parent)
 
-        results = self.connection.client.index(
-            index=index, _id=id_, _type=clean_params.get(Input.TYPE), params=query_params, document=document
-        )
-        if results:
+        if results := self.connection.client.index(
+            index=index,
+            _id=id_,
+            _type=clean_params.get(Input.TYPE),
+            params=query_params,
+            document=document,
+        ):
             return {Output.INDEX_RESPONSE: insightconnect_plugin_runtime.helper.clean(results)}
 
         raise PluginException(

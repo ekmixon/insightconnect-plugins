@@ -12,14 +12,12 @@ class Util:
     def default_connector(action, connect_params: object = None):
         default_connection = Connection()
         default_connection.logger = logging.getLogger("connection logger")
-        if connect_params:
-            params = connect_params
-        else:
-            params = {
-                Input.URL: "https://rapid7.com",
-                Input.CREDENTIALS: {"username": "user", "password": "pass"},
-                Input.USE_AUTHENTICATION: True,
-            }
+        params = connect_params or {
+            Input.URL: "https://rapid7.com",
+            Input.CREDENTIALS: {"username": "user", "password": "pass"},
+            Input.USE_AUTHENTICATION: True,
+        }
+
         default_connection.connect(params)
         action.connection = default_connection
         action.logger = logging.getLogger("action logger")

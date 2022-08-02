@@ -26,9 +26,7 @@ class ModifyObject(komand.Action):
         dn, search_base = formatter.format_dn(dn)
         self.logger.info(f"Escaped DN {dn}")
 
-        pairs = formatter.find_parentheses_pairs(dn)
-        # replace ( and ) when they are part of a name rather than a search parameter
-        if pairs:
+        if pairs := formatter.find_parentheses_pairs(dn):
             dn = formatter.escape_brackets_for_query(dn)
 
         self.logger.info(dn)
@@ -44,9 +42,13 @@ class ModifyObject(komand.Action):
         entries = result_list_object["entries"]
 
         dn_test = [d["dn"] for d in entries if "dn" in d]
-        if len(dn_test) == 0:
-            self.logger.error("The DN " + dn + " was not found")
-            raise PluginException(cause="The DN was not found.", assistance="The DN " + dn + " was not found")
+        if not dn_test:
+            self.logger.error(f"The DN {dn} was not found")
+            raise PluginException(
+                cause="The DN was not found.",
+                assistance=f"The DN {dn} was not found",
+            )
+
 
         # Update attribute
         dn = formatter.unescape_asterisk(dn)
@@ -57,5 +59,5 @@ class ModifyObject(komand.Action):
         if result["result"] == 0:
             return {Output.SUCCESS: True}
 
-        self.logger.error("failed: error message %s" % output)
+        self.logger.error(f"failed: error message {output}")
         return {Output.SUCCESS: False}

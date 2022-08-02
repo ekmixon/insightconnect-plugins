@@ -43,16 +43,12 @@ def clean_data(analysis_data):
     :param analysis_data API get analysis request
     :return:
     """
-    data = {}
-
-    if analysis_data.get("data"):
-        data = analysis_data.get("data")
-
+    data = analysis_data.get("data") or {}
     if data.get("items"):
         data_items = data.get("items")
         if isinstance(data_items, dict):
             items = [v for k, v in data.get("items").items()]
-            if len(items) == 0:
+            if not items:
                 items = []
             data["items"] = items
             analysis_data["data"] = data
@@ -67,11 +63,7 @@ def clean_data(analysis_data):
 
 def clean_artifact(artifact_data):
     items = []
-    data = {}
-
-    if artifact_data.get("data"):
-        data = artifact_data.get("data")
-
+    data = artifact_data.get("data") or {}
     if data.get("items"):
         data_items = data.get("items")
         if isinstance(data_items, dict):
@@ -84,9 +76,10 @@ def clean_artifact(artifact_data):
                         imports = clean_imports(v.get("forensics").get("imports"))
                     v["forensics"]["imports"] = imports
                     # Clean sections
-                    if v.get("forensics").get("sections", False):
-                        if isinstance(v.get("forensics").get("sections"), dict):
-                            v["forensics"]["sections"] = [v.get("forensics").get("sections")]
+                    if v.get("forensics").get(
+                        "sections", False
+                    ) and isinstance(v.get("forensics").get("sections"), dict):
+                        v["forensics"]["sections"] = [v.get("forensics").get("sections")]
                     # Clean exports
                     exports = []
                     if v.get("forensics").get("exports", False):
@@ -102,11 +95,7 @@ def clean_artifact(artifact_data):
 
 
 def clean_annotations(annotation_data):
-    data = {}
-
-    if annotation_data.get("data"):
-        data = annotation_data.get("data")
-
+    data = annotation_data.get("data") or {}
     if data.get("items"):
         data_items = data.get("items")
         if isinstance(data_items, dict):
@@ -127,9 +116,7 @@ def clean_imports(imports):
     for item in imports:
         # Check for entries and format to string
         if item.get("entries"):
-            entries = []
-            for entry in item.get("entries"):
-                entries.append([str(i) for i in entry])
+            entries = [[str(i) for i in entry] for entry in item.get("entries")]
             item["entries"] = entries
         # add corrected import to import list
         clean.append(item)
@@ -139,8 +126,6 @@ def clean_imports(imports):
 def clean_exports(exports):
     clean = []
     for item in exports:
-        export = []
-        for i in item:
-            export.append(str(i))
+        export = [str(i) for i in item]
         clean.append(export)
     return clean

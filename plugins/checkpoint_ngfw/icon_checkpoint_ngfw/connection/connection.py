@@ -134,10 +134,9 @@ class Connection(komand.Connection):
             result.raise_for_status()
         except Exception:
             self.logger.warning(result.text)
-            if "object is locked" in result.text:
-                if self.discard_sessions:
-                    self.discard_all_sessions()
-                    result = requests.post(url, headers=headers, json=payload, verify=self.ssl_verify)
+            if "object is locked" in result.text and self.discard_sessions:
+                self.discard_all_sessions()
+                result = requests.post(url, headers=headers, json=payload, verify=self.ssl_verify)
 
             # try to see if we still have a bad request
             try:

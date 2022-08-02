@@ -18,11 +18,11 @@ class RetrieveAttackActions(komand.Action):
         if not policy_id or not attack_group_id:
             self.connection.connector.raise_error("Policy_id and attack_group_id can't be null")
 
-        action = action + "/" + policy_id + "/attack_groups/" + attack_group_id + "/actions"
+        action = f"{action}/{policy_id}/attack_groups/{attack_group_id}/actions"
 
         action_id = params.get("action_id")
         if action_id:
-            action = action + "/" + action_id
+            action = f"{action}/{action_id}"
 
         r = self.connection.connector.get(action)
         self.connection.connector.raise_error_when_not_in_status(200)

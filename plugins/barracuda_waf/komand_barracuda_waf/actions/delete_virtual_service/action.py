@@ -15,7 +15,7 @@ class DeleteVirtualService(komand.Action):
         action = "virtual_services/"
         self.connection.connector.check_required_params(params, ["id"])
 
-        action = action + params.get("id")
+        action += params.get("id")
         r = self.connection.connector.delete(action)
 
         self.connection.connector.raise_error_when_not_in_status(200)

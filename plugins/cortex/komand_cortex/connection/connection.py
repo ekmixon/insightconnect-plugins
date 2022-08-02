@@ -11,7 +11,10 @@ class Connection(komand.Connection):
 
     def connect(self, params={}):
 
-        self.url = "{}://{}:{}".format(params.get("protocol"), params.get("host"), params.get("port"))
+        self.url = (
+            f'{params.get("protocol")}://{params.get("host")}:{params.get("port")}'
+        )
+
         self.verify = params.get("verify", True)
         self.logger.info("URL: %s", self.url)
 

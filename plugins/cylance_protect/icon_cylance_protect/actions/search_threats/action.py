@@ -16,8 +16,7 @@ class SearchThreats(insightconnect_plugin_runtime.Action):
 
     def run(self, params={}):
         matching_threats = self.connection.client.search_threats(params.get(Input.THREAT_IDENTIFIER))
-        score = params.get(Input.SCORE, None)
-        if score:
+        if score := params.get(Input.SCORE, None):
             for threat in matching_threats:
                 if score != threat.get("cylance_score"):
                     matching_threats.remove(threat)

@@ -19,9 +19,7 @@ def format_result(logger, msg):
         result["attachments"].append(a)
     parser = email.parser.HeaderParser()
     headers = parser.parsestr(msg.as_string())
-    header_list = []
-    for h in headers.items():
-        header_list.append({"key": h[0], "value": h[1]})
+    header_list = [{"key": h[0], "value": h[1]} for h in headers.items()]
     result["headers"] = header_list
     logger.info("*" * 10)
     logger.info({"result": result})

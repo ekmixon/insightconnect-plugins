@@ -46,8 +46,9 @@ class Issue(komand.Trigger):
         is_dst = time.daylight and time.localtime().tm_isdst > 0
         utc_offset = -(time.altzone if is_dst else time.timezone)
         timezone = time.tzname[time.daylight]
-        time_now = datetime.datetime.now(dateutil.tz.tzoffset(time.tzname[time.daylight], utc_offset))
-        return time_now
+        return datetime.datetime.now(
+            dateutil.tz.tzoffset(time.tzname[time.daylight], utc_offset)
+        )
 
     def run(self, params={}):
         # init time , repo, issues
@@ -59,7 +60,7 @@ class Issue(komand.Trigger):
         org = params.get("org")
         repo = params.get("repository")
         if assign and org and repo:
-            api_call = self.connection.api_prefix + "/repos/" + org + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{org}/{repo}/issues"
             p_rams["assignee"] = assign
             self.logger.info(
                 "Monitoring issues for assignee %s on repository %s in organization %s",
@@ -68,15 +69,17 @@ class Issue(komand.Trigger):
                 org,
             )
         elif org and repo:
-            api_call = self.connection.api_prefix + "/repos/" + org + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{org}/{repo}/issues"
             self.logger.info("Monitoring issues on repository %s in organization %s", repo, org)
             p_rams["assignee"] = None
         elif assign and repo:
-            api_call = self.connection.api_prefix + "/repos/" + self.connection.username + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{self.connection.username}/{repo}/issues"
+
             p_rams["assignee"] = assign
             self.logger.info("Monitoring issues for assignee %s on repository %s", assign, repo)
         else:
-            api_call = self.connection.api_prefix + "/repos/" + self.connection.username + "/" + repo + "/issues"
+            api_call = f"{self.connection.api_prefix}/repos/{self.connection.username}/{repo}/issues"
+
             self.logger.info("Monitoring issues on repository %s", repo)
 
         while True:
@@ -107,7 +110,7 @@ class Issue(komand.Trigger):
 
     def test(self):
         try:
-            api_call = self.connection.api_prefix + "/user"
+            api_call = f"{self.connection.api_prefix}/user"
             response = requests.get(
                 api_call, auth=(self.connection.username, self.connection.secret), verify=False  # noqa: B501
             )

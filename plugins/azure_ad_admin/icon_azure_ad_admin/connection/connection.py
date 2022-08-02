@@ -52,10 +52,10 @@ class Connection(komand.Connection):
         }
 
         formatted_endpoint = self.O365_AUTH_ENDPOINT.format(tenant_id)
-        self.logger.info("Getting token from: " + formatted_endpoint)
+        self.logger.info(f"Getting token from: {formatted_endpoint}")
 
         request = requests.post(formatted_endpoint, data=data)
-        self.logger.info("Authentication request status: " + str(request.status_code))
+        self.logger.info(f"Authentication request status: {str(request.status_code)}")
 
         if request.status_code is not 200:
             self.logger.error(request.text)
@@ -78,8 +78,10 @@ class Connection(komand.Connection):
 
     @staticmethod
     def get_headers(auth_token):
-        headers = {"Content-type": "application/json", "Authorization": "Bearer " + auth_token}
-        return headers
+        return {
+            "Content-type": "application/json",
+            "Authorization": f"Bearer {auth_token}",
+        }
 
     def test(self):
         if not self.auth_token:

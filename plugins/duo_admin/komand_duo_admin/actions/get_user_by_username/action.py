@@ -18,8 +18,7 @@ class GetUserByUsername(komand.Action):
         user = self.connection.admin_api.get_users_by_name(params.get(Input.USERNAME))
         try:
             out = {Output.USER: user[0]}
-            results = komand.helper.clean(out)
-            return results
+            return komand.helper.clean(out)
 
         except (TypeError, IndexError) as e:
             raise PluginException(preset=PluginException.Preset.SERVER_ERROR, data=f"User not found. Error: {e}")

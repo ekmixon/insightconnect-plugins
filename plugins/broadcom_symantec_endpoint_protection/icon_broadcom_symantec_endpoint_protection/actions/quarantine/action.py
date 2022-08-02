@@ -74,12 +74,7 @@ class Quarantine(insightconnect_plugin_runtime.Action):
         :return: Boolean indicating if the agent identifier given was a MAC address (true)
         """
         r = r"([a-fA-F0-9]{2}[-:]){5}[a-zA-Z0-9]{2}"
-        matches = re.match(r, agent_identifier)
-
-        if matches:
-            return True
-
-        return False
+        return bool(matches := re.match(r, agent_identifier))
 
     @staticmethod
     def _normalize_mac_address(mac_address: str) -> str:

@@ -29,10 +29,7 @@ class GetAgentDetails(insightconnect_plugin_runtime.Action):
             else:  # hostname
                 match: Optional[Agent] = self.connection.api_client.get_computer(computer_name=query)
 
-            if not match:
-                return {}
-            return {Output.AGENT: clean(match)}
-
+            return {Output.AGENT: clean(match)} if match else {}
         except APIException as e:
             raise PluginException(
                 cause="An error occurred while attempting to get agent details!",
@@ -47,9 +44,4 @@ class GetAgentDetails(insightconnect_plugin_runtime.Action):
         :return: Boolean indicating if the query given was a MAC address (true)
         """
         r = r"([a-fA-F0-9]{2}[-:]){5}[a-zA-Z0-9]{2}"
-        matches = re.match(r, query)
-
-        if matches:
-            return True
-
-        return False
+        return bool(matches := re.match(r, query))

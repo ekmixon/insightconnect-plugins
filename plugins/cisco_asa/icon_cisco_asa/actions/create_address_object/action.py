@@ -34,8 +34,9 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
             )
 
         if object_type != "IPv4Range" and whitelist:
-            whitelisted_item = self.match_whitelist(address, whitelist, object_type)
-            if whitelisted_item:
+            if whitelisted_item := self.match_whitelist(
+                address, whitelist, object_type
+            ):
                 raise PluginException(
                     cause=f"Address Object not created because the host {address} was "
                     f"found in the whitelist as {whitelist}.",
@@ -54,10 +55,7 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
             return "IPv4Network"
         if re.search(r"[a-zA-Z]", address):
             return "IPv4FQDN"
-        if "-" in address:
-            return "IPv4Range"
-
-        return "IPv4Address"
+        return "IPv4Range" if "-" in address else "IPv4Address"
 
     def match_whitelist(self, address: str, whitelist: list, object_type: str) -> str:
         if address in whitelist:
@@ -86,12 +84,12 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         if re.search("/", address):  # CIDR
             return ip_network(address, False).is_private
         elif re.search("-", address):  # IP Range
-            split_ = address.split("-")
-            if len(address.split("-")) != 2:  # If this isn't 2, I'm not sure what the input was
+            if len(address.split("-")) != 2:
                 raise PluginException(
                     cause="Improperly formatted input provided.",
                     assistance="Range should have one and only one dash.",
                 )
+            split_ = address.split("-")
             return ip_address(split_[0]).is_private and ip_address(split_[1]).is_private
         try:  # Other
             if ip_address(address).is_private:

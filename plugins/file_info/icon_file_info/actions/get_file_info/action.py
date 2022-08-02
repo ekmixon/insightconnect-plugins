@@ -18,11 +18,7 @@ class GetFileInfo(insightconnect_plugin_runtime.Action):
     def run(self, params={}):
         file = params.get(Input.FILE)
         kind = filetype.guess(base64.decodebytes(file.encode("utf-8")))
-        if kind is None:
-            extension = "unknown"
-        else:
-            extension = kind.extension
-
+        extension = "unknown" if kind is None else kind.extension
         return {Output.FILE_SIZE: self.size(file), Output.FILE_TYPE: extension}
 
     @staticmethod

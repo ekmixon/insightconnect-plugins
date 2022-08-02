@@ -10,7 +10,7 @@ def handler_data(recv_data):
         headers, data = recv_data.split("\r\n\r\n")
         headers = headers.split("\n")
         req_method = headers[0].strip().split()
-        print("Headers: {}".format(headers))
+        print(f"Headers: {headers}")
     except:
         logging.error("Bad HTTP request format")
         return False
@@ -30,14 +30,14 @@ def handler_data(recv_data):
             for header in headers:
                 if header.startswith("Authorization: "):
                     auth_header = header
-                    print("Authorization: {}".format(auth_header))
+                    print(f"Authorization: {auth_header}")
         except:
             logging.error("Missing Authorization header")
             return False
 
         try:
             auth = auth_header.split()[2]
-            print("Token: {}".format(auth))
+            print(f"Token: {auth}")
         except:
             logging.error("Authorization header is incomplete")
             return False
@@ -75,7 +75,7 @@ def run():
     endpoint = "0.0.0.0"
     tcp_port = 8080
 
-    host = protocol + "://" + endpoint + ":" + str(tcp_port)
+    host = f"{protocol}://{endpoint}:{tcp_port}"
     print("Listening on", host)
 
     # Open socket server to listen for messages

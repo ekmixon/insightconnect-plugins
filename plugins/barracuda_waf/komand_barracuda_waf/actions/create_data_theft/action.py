@@ -15,7 +15,7 @@ class CreateDataTheft(komand.Action):
         action = "security_policies"
         self.connection.connector.check_required_params(params, ["policy_id", "name", "identity_theft_type"])
 
-        action = action + "/" + params.get("policy_id") + "/data_theft_protection"
+        action = f"{action}/" + params.get("policy_id") + "/data_theft_protection"
 
         r = self.connection.connector.post(
             action,

@@ -43,12 +43,14 @@ class UpdateIncident(komand.Action):
         except json.JSONDecodeError as e:
             raise PluginException(preset=PluginException.Preset.INVALID_JSON, data=e)
 
-        values = dict()
+        values = {
+            key: params[value]
+            for key, value in self._CONVERSION_KEY.items()
+            if params.get(value)
+        }
 
-        for key, value in self._CONVERSION_KEY.items():
-            if params.get(value):
-                values.update({key: params[value]})
-        values.update(other_inputs)
+
+        values |= other_inputs
 
         try:
             for key, value in values:
@@ -66,7 +68,7 @@ class UpdateIncident(komand.Action):
         original_incident_response = requests.get(url, headers=headers)
 
         # If we made it this far, and this call fails, something really unexpected happened.
-        if not original_incident_response.status_code == 200:
+        if original_incident_response.status_code != 200:
             raise PluginException(preset=PluginException.Preset.SERVER_ERROR, data=original_incident_response.text)
 
         try:

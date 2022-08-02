@@ -17,11 +17,10 @@ class Connection(komand.Connection):
 
     def test(self):
         server = self.server
-        endpoint = server + "/cuckoo/status"
+        endpoint = f"{server}/cuckoo/status"
         try:
             r = requests.get(endpoint)
             r.raise_for_status()
-            response = r.json()
-            return response
+            return r.json()
         except Exception as e:
-            self.logger.error("Error: " + str(e))
+            self.logger.error(f"Error: {str(e)}")

@@ -93,7 +93,7 @@ class Receive(komand.Trigger):
         endpoint = params.get("endpoint", "0.0.0.0")  # noqa: B104
         tcp_port = params.get("tcp_port")
 
-        host = endpoint + ":" + str(tcp_port)
+        host = f"{endpoint}:{str(tcp_port)}"
         self.logger.info("Listening on %s", host)
 
         # Open socket server to listen for messages
